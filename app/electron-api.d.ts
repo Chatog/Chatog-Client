@@ -1,4 +1,6 @@
 export type ElectronAPI = {
+  closeWindow: () => void;
+  reconfigureWindow: (type: 'home' | 'room') => void;
   openStats: () => void;
 };
 

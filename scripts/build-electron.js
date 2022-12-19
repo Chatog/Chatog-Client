@@ -31,8 +31,8 @@ function build() {
           output: 'package',
           app: 'dist'
         },
-        appId: 'edu.nju.gstarp',
-        productName: 'Vuetify3-Vite-APP',
+        appId: 'nju.gstarp',
+        productName: 'Chatog',
         electronVersion: '19.1.2',
         compression: 'normal',
         removePackageKeywords: true,

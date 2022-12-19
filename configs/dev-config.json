@@ -1,5 +1,8 @@
 {
   "DEV_SERVER_PORT": 3004,
   "ELECTRON_PATH": "",
-  "ELECTRON_ENABLE_LOGGING": true
+  "ELECTRON_EXTRA_PARAMS": [
+    "--enable-logging",
+    "--vmodule=*/vp9/libvpx_vp9_encoder.cc=1"
+  ]
 }

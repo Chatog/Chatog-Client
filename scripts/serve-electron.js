@@ -17,16 +17,10 @@ async function serveElectron() {
     process.electronProcess.kill();
   }
 
-  const args = [electronMainPath];
-  /**
-   * --enable-loggind
-   */
-  if (DevConfig.ELECTRON_ENABLE_LOGGING) {
-    args.push('--enable-logging');
-  }
+  // ['main.js', ... , 'extra params']
+  const args = [electronMainPath, ...(DevConfig.ELECTRON_EXTRA_PARAMS || [])];
 
   console.log(`[spawn] ${electronExecPath} ${args.join(' ')}`);
-
   process.electronProcess = spawn(electronExecPath, args, {
     // let electron know current mode
     env: { NODE_ENV: 'development' },

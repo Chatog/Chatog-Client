@@ -1,19 +1,18 @@
 {
-  "name": "vuetify3-vite-template",
+  "name": "chatog-client",
   "version": "0.0.1",
-  "description": "a simple but complete template for Vuetify app development.",
+  "description": "the electron-based client for Chatog",
   "author": {
     "name": "GStarP",
     "email": "1700066935@qq.com"
   },
   "license": "MIT",
-  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "dev:e": "node ./scripts/serve-electron.js",
     "build": "vue-tsc --noEmit && vite build",
-    "build:s": "vite build --mode electron",
-    "build:e": "node ./scripts/build-electron.js"
+    "build:e": "vite build --mode electron",
+    "build:exe": "node ./scripts/build-electron.js"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",

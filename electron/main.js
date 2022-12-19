@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, protocol } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const { join } = require('path');
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -16,7 +16,7 @@ function initMainWindow() {
   });
 
   /**
-   * dev: request localhost url
+   * dev: load localhost url
    * prod: load static `index.html` file
    */
   if (isDev) {
@@ -47,13 +47,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-/**
- * API exposed to browser env
- */
-
+/* API exposed to browser env */
 /**
  * NEW_WINDOW
- * open new window and load the same preload.js as mainWindow
+ * open new window
  * @param {string} url new window's url
  */
 ipcMain.handle('NEW_WINDOW', (e, url) => {

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { join } = require('path');
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -99,4 +99,34 @@ ipcMain.handle('CLOSE_WINDOW', (e) => {
  */
 ipcMain.handle('RECONFIGURE_WINDOW', (e, type) => {
   reconfigure(type);
+});
+
+/**
+ * OPEN_PATH
+ * open path in system explorer
+ * @param {string} path  an absolute dir path
+ */
+ipcMain.handle('OPEN_PATH', (e, path) => {
+  const ret = shell.openPath(path);
+  // not return "" means error occurred
+  if (!ret) console.error(ret);
+});
+
+/**
+ * SELECT_PATH
+ * use system explorer to select a path
+ */
+ipcMain.handle('SELECT_PATH', (e) => {
+  return dialog
+    .showOpenDialog(window, {
+      title: 'select new records save path',
+      properties: ['openDirectory']
+    })
+    .then((r) => {
+      if (r.canceled || r.filePaths.length === 0) {
+        return '';
+      } else {
+        return r.filePaths[0];
+      }
+    });
 });

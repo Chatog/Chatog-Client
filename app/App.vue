@@ -19,4 +19,8 @@ body {
 .enable-move button {
   -webkit-app-region: no-drag;
 }
+
+.clickable:hover {
+  cursor: pointer;
+}
 </style>

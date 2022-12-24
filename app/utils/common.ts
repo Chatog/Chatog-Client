@@ -1,6 +1,4 @@
 /**
  * whether in electron or in browser
  */
-export function isElectron(): boolean {
-  return window.ELECTRON_API !== undefined;
-}
+export const IS_ELECTRON = window && window.ELECTRON_API;

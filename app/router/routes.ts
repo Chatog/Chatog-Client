@@ -16,10 +16,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'create-room',
         component: () => import('@/pages/Home/CreateRoom.vue')
-      },
-      {
-        path: 'join-room',
-        component: () => import('@/pages/Home/JoinRoom.vue')
       }
     ]
   },

@@ -12,7 +12,11 @@
   </div>
   <!-- loading -->
   <div class="global-loading-container" v-if="loadingShow">
-    <v-progress-circular indeterminate size="56"></v-progress-circular>
+    <v-progress-circular
+      indeterminate
+      size="56"
+      color="#FFF"
+    ></v-progress-circular>
     <div class="global-loading-text">{{ loadingText }}</div>
   </div>
 </template>
@@ -69,7 +73,7 @@ body {
   transform: translate(-50%, -50%);
   width: 120px;
   height: 120px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.9);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -78,8 +82,8 @@ body {
 }
 .global-loading-text {
   font-size: 14px;
-  font-weight: 300;
   margin-top: 8px;
   margin-bottom: -8px;
+  color: #fff;
 }
 </style>

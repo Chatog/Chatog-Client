@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useLoadingStore } from '@/store/loading';
-import { useAlertStore } from '@/store/alert';
+import { alert } from '@/store/alert';
 
 export interface Res<T> {
   code: number;
@@ -19,7 +19,6 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (err) => {
-    const { alert } = useAlertStore();
     alert('error', err);
   }
 );
@@ -31,7 +30,6 @@ axiosInstance.interceptors.response.use(
     return res.data;
   },
   (err) => {
-    const { alert } = useAlertStore();
     alert('error', err);
   }
 );

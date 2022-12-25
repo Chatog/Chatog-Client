@@ -1,0 +1,22 @@
+.clickable:hover {
+  cursor: pointer;
+}
+
+/**
+ * share between APPConfig.vue and CreateRoom.vue
+ */
+.home-form-page {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  height: 100%;
+}
+.home-form-page__title {
+  margin-bottom: 20px;
+}
+.home-form-page__form {
+  margin-bottom: auto;
+}
+.home-form-page button {
+  margin-bottom: 16px;
+}

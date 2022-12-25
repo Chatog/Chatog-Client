@@ -6,7 +6,8 @@ contextBridge.exposeInMainWorld(EXPORT_NAMESPACE, {
   closeWindow: () => ipcRenderer.invoke('CLOSE_WINDOW'),
   reconfigureWindow: (type) => ipcRenderer.invoke('RECONFIGURE_WINDOW', type),
   openPath: (path) => ipcRenderer.invoke('OPEN_PATH', path),
-  selectPath: () => ipcRenderer.invoke('SELECT_PATH'),
+  selectPath: (defaultPath, title) =>
+    ipcRenderer.invoke('SELECT_PATH', defaultPath, title),
   openStats: () =>
     ipcRenderer.invoke('NEW_WINDOW', 'chrome://webrtc-internals/')
 });

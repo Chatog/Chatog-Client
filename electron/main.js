@@ -41,7 +41,7 @@ function initWindow() {
 function reconfigure(type) {
   if (!window) return;
   if (type === 'home') {
-    window.setSize(400, 540);
+    window.setSize(380, 540);
     window.setResizable(false);
   } else if (type === 'room') {
     window.setSize(1280, 720);
@@ -115,11 +115,14 @@ ipcMain.handle('OPEN_PATH', (e, path) => {
 /**
  * SELECT_PATH
  * use system explorer to select a path
+ * @param {string} defaultPath default explorer path
+ * @param {string} title explorer title
  */
-ipcMain.handle('SELECT_PATH', (e) => {
+ipcMain.handle('SELECT_PATH', (e, defaultPath, title) => {
   return dialog
     .showOpenDialog(window, {
-      title: 'select new records save path',
+      title,
+      defaultPath,
       properties: ['openDirectory']
     })
     .then((r) => {

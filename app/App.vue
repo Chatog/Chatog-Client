@@ -52,15 +52,11 @@ body {
   -webkit-app-region: no-drag;
 }
 
-.clickable:hover {
-  cursor: pointer;
-}
-
 .global-alert-container {
   position: absolute;
   z-index: 999;
-  width: 80%;
-  max-width: 400px;
+  width: 90%;
+  max-width: 480px;
   left: 50%;
   transform: translateX(-50%);
 }

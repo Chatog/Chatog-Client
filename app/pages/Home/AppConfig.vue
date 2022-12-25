@@ -1,29 +1,48 @@
 <template>
-  <div class="app-config">
-    <h1>App Config</h1>
-    <v-divider></v-divider>
-    <v-text-field readonly variant="outlined" v-model="rsp">
-      <template v-slot:append-inner>
-        <v-btn icon="mdi-folder" @click="selectRSP"></v-btn>
-      </template>
-    </v-text-field>
-    <v-btn @click="confirm">Confirm</v-btn>
-    <v-btn @click="$router.push('/home')">Cancel</v-btn>
+  <div class="home-form-page">
+    <div class="text-h5 home-form-page__title">CHANGE APP CONFIG</div>
+    <div class="home-form-page__form">
+      <div>
+        <v-text-field
+          readonly
+          label="records save path"
+          variant="outlined"
+          v-model="rsp"
+          append-inner-icon="mdi-folder"
+          @click:append-inner="selectRSP"
+        >
+        </v-text-field>
+      </div>
+    </div>
+    <v-btn variant="flat" color="primary" @click="confirm">Confirm</v-btn>
+    <v-btn variant="tonal" @click="$router.push('/home')">Back</v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { recordsSavePath } from '@/utils/storage';
+import { alert } from '@/store/alert';
 
 const rsp = ref(recordsSavePath());
 
 async function selectRSP() {
-  const newRSP = await window.ELECTRON_API?.selectPath();
-  rsp.value = newRSP!;
+  const newRSP = await window.ELECTRON_API?.selectPath(
+    rsp.value,
+    'select the new records save path'
+  );
+  if (newRSP) {
+    rsp.value = newRSP;
+  }
 }
 
 function confirm() {
-  recordsSavePath(rsp.value);
+  try {
+    recordsSavePath(rsp.value);
+    alert('success', 'change applied');
+  } catch (e) {
+    console.error(e);
+    alert('error', 'change failed');
+  }
 }
 </script>

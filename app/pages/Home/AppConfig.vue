@@ -8,7 +8,7 @@
       </template>
     </v-text-field>
     <v-btn @click="confirm">Confirm</v-btn>
-    <v-btn @click="$router.push({ path: '/home' })">Cancel</v-btn>
+    <v-btn @click="$router.push('/home')">Cancel</v-btn>
   </div>
 </template>
 

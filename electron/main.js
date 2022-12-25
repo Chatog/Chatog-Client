@@ -41,7 +41,7 @@ function initWindow() {
 function reconfigure(type) {
   if (!window) return;
   if (type === 'home') {
-    window.setSize(400, 480);
+    window.setSize(400, 540);
     window.setResizable(false);
   } else if (type === 'room') {
     window.setSize(1280, 720);

@@ -15,7 +15,7 @@
       </div>
     </div>
     <v-btn variant="flat" color="primary" @click="confirm">Confirm</v-btn>
-    <v-btn variant="tonal" @click="$router.push('/home')">Back</v-btn>
+    <v-btn variant="tonal" @click="$router.back()">Back</v-btn>
   </div>
 </template>
 

@@ -55,7 +55,7 @@ body {
 .global-alert-container {
   position: absolute;
   z-index: 999;
-  width: 90%;
+  width: 96%;
   max-width: 480px;
   left: 50%;
   transform: translateX(-50%);

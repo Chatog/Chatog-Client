@@ -10,7 +10,6 @@ interface ReqCreateRoomParam {
 }
 interface ReqCreateRoomRes {
   roomId: string;
-  roomName: string;
 }
 export async function reqCreateRoom(
   params: ReqCreateRoomParam
@@ -21,5 +20,5 @@ export async function reqCreateRoom(
 export async function reqJoinRoom(
   roomNumber: string
 ): Promise<Res<ReqCreateRoomRes>> {
-  return await axios.post('/room/join', roomNumber);
+  return await axios.post('/room/join', { roomNumber });
 }

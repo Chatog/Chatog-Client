@@ -2,6 +2,7 @@ import axios from '@/api';
 import { Res } from '.';
 
 interface ReqCreateRoomParam {
+  nickname: string;
   roomName: string;
   banVideo: boolean;
   banAudio: boolean;
@@ -17,8 +18,12 @@ export async function reqCreateRoom(
   return await axios.post('/room/create', params);
 }
 
+interface ReqJoinRoomParam {
+  nickname: string;
+  roomNumber: string;
+}
 export async function reqJoinRoom(
-  roomNumber: string
+  params: ReqJoinRoomParam
 ): Promise<Res<ReqCreateRoomRes>> {
-  return await axios.post('/room/join', { roomNumber });
+  return await axios.post('/room/join', params);
 }

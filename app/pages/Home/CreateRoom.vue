@@ -3,6 +3,11 @@
     <div class="text-h5 home-form-page__title">CREATE NEW ROOM</div>
     <div class="home-form-page__form">
       <v-text-field
+        label="Nickname"
+        variant="outlined"
+        v-model="createRoomForm.nickname"
+      ></v-text-field>
+      <v-text-field
         label="Room Name"
         variant="outlined"
         v-model="createRoomForm.roomName"
@@ -51,8 +56,10 @@ import { useRouter } from 'vue-router';
 import { reqCreateRoom } from '@/api/room';
 import { IS_ELECTRON } from '@/utils/common';
 import { alert } from '@/store/alert';
+import { defaultNickname } from '@/utils/storage';
 
 const createRoomForm = reactive({
+  nickname: defaultNickname(),
   roomName: '',
   banVideo: false,
   banAudio: false,

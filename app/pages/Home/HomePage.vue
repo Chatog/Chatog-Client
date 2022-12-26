@@ -9,10 +9,16 @@
     <!-- join room -->
     <div class="input-container">
       <v-text-field
-        class=""
+        label="Nickname"
+        variant="outlined"
+        v-model="joinRoomForm.nickname"
+      ></v-text-field>
+    </div>
+    <div class="input-container">
+      <v-text-field
         label="Room ID"
         variant="outlined"
-        v-model="roomId"
+        v-model="joinRoomForm.roomNumber"
       ></v-text-field>
     </div>
     <v-btn variant="flat" color="primary" @click="confirmJoinRoom"
@@ -47,8 +53,8 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import { recordsSavePath } from '@/utils/storage';
-import { ref } from 'vue';
+import { defaultNickname, recordsSavePath } from '@/utils/storage';
+import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
 import { alert } from '@/store/alert';
@@ -57,16 +63,23 @@ function viewRecords() {
   window.ELECTRON_API?.openPath(recordsSavePath());
 }
 
-const roomId = ref('');
+const joinRoomForm = reactive({
+  nickname: defaultNickname(),
+  roomNumber: ''
+});
 
 const router = useRouter();
 async function confirmJoinRoom() {
   // validate
-  if (roomId.value === '') {
+  if (joinRoomForm.nickname === '') {
+    alert('warning', 'nickname cannot be empty');
+    return;
+  }
+  if (joinRoomForm.roomNumber === '') {
     alert('warning', 'please enter the room id');
     return;
   }
-  const res = await reqJoinRoom(roomId.value);
+  const res = await reqJoinRoom(joinRoomForm);
   if (IS_ELECTRON) {
     window.ELECTRON_API?.reconfigureWindow('room');
   }
@@ -86,8 +99,8 @@ async function confirmJoinRoom() {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 16px;
-  margin-bottom: 32px;
+  margin-top: 8px;
+  margin-bottom: 24px;
   user-select: none;
 }
 .logo__icon {

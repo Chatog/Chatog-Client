@@ -44,7 +44,7 @@ function reconfigure(type) {
     window.setSize(380, 540);
     window.setResizable(false);
   } else if (type === 'room') {
-    window.setSize(1280, 720);
+    window.setSize(1080, 720);
     window.setResizable(true);
   }
   window.center();
@@ -132,4 +132,20 @@ ipcMain.handle('SELECT_PATH', (e, defaultPath, title) => {
         return r.filePaths[0];
       }
     });
+});
+
+/**
+ * MINIMIZE_WINDOW
+ * minimize window
+ */
+ipcMain.handle('MINIMIZE_WINDOW', (e) => {
+  window.minimize();
+});
+
+/**
+ * SET_FULLSCREEN
+ * set window fullscreen or not
+ */
+ipcMain.handle('SET_FULLSCREEN', (e, full) => {
+  window.setFullScreen(full);
 });

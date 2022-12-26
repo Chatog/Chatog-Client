@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld(EXPORT_NAMESPACE, {
   openPath: (path) => ipcRenderer.invoke('OPEN_PATH', path),
   selectPath: (defaultPath, title) =>
     ipcRenderer.invoke('SELECT_PATH', defaultPath, title),
+  minimizeWindow: () => ipcRenderer.invoke('MINIMIZE_WINDOW'),
+  setFullScreen: (full) => ipcRenderer.invoke('SET_FULLSCREEN', full),
   openStats: () =>
     ipcRenderer.invoke('NEW_WINDOW', 'chrome://webrtc-internals/')
 });

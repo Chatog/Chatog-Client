@@ -3,6 +3,8 @@ export type ElectronAPI = {
   reconfigureWindow: (type: 'home' | 'room') => void;
   openPath: (path: string) => void;
   selectPath: (defaultPath: string, title: string) => Promise<string>;
+  minimizeWindow: () => void;
+  setFullScreen: (full: boolean) => void;
   openStats: () => void;
 };
 

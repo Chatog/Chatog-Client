@@ -46,6 +46,20 @@ const roomMock: MockMethod[] = [
         })
       );
     }
+  },
+  {
+    url: '/api/room/info',
+    method: 'get',
+    timeout: 1000,
+    response: {
+      code: 0,
+      msg: '',
+      data: {
+        roomId: '114514',
+        roomName: 'Elden Ring',
+        roomStartTime: Date.now() - 60
+      }
+    }
   }
 ];
 

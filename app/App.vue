@@ -19,13 +19,28 @@
     ></v-progress-circular>
     <div class="global-loading-text">{{ loadingText }}</div>
   </div>
+  <!-- dialog -->
+  <div class="global-dialog-container">
+    <v-dialog v-model="dialogShow" width="60%" max-width="300" persistent>
+      <v-card>
+        <v-card-title>{{ dialogTitle }}</v-card-title>
+        <v-card-text>{{ dialogText }}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="#666" @click="onDialogCancel">Cancel</v-btn>
+          <v-btn color="primary" @click="onDialogConfirm">Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useAlertStore } from '@/store/alert';
-import { storeToRefs } from 'pinia';
-import { useLoadingStore } from '@/store/loading';
 import { IS_ELECTRON } from '@/utils/common';
+import { storeToRefs } from 'pinia';
+import { useAlertStore } from '@/store/alert';
+import { useLoadingStore } from '@/store/loading';
+import { useDialogStore } from '@/store/dialog';
 
 const { alertType, alertText, alertShow } = storeToRefs(useAlertStore());
 const alertStyle = {
@@ -34,6 +49,18 @@ const alertStyle = {
 };
 
 const { loadingText, loadingShow } = storeToRefs(useLoadingStore());
+
+const { dialogShow, dialogTitle, dialogText, dialogResolve, dialogReject } =
+  storeToRefs(useDialogStore());
+function onDialogCancel() {
+  dialogShow.value = false;
+  dialogReject.value();
+}
+function onDialogConfirm() {
+  dialogShow.value = false;
+  // wait until dialog hide animation ended
+  setTimeout(() => dialogResolve.value(undefined), 280);
+}
 </script>
 
 <style>
@@ -81,5 +108,13 @@ body {
   margin-top: 8px;
   margin-bottom: -8px;
   color: #fff;
+}
+
+.global-dialog-container {
+  position: absolute;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

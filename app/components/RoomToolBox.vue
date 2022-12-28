@@ -27,6 +27,8 @@
 import { useRouter } from 'vue-router';
 import ToolboxButton from './RoomToolboxButton.vue';
 import { ref } from 'vue';
+import { showDialog } from '@/store/dialog';
+import { IS_ELECTRON } from '@/utils/common';
 
 const router = useRouter();
 
@@ -36,8 +38,14 @@ function toggleMic() {
 }
 
 function hangUp() {
-  window.ELECTRON_API?.reconfigureWindow('home');
-  router.push('/home');
+  showDialog('Are you sure to quit room?')
+    .then(() => {
+      if (IS_ELECTRON) {
+        window.ELECTRON_API?.reconfigureWindow('home');
+      }
+      router.push('/home');
+    })
+    .catch(() => {});
 }
 </script>
 

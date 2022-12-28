@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useLoadingStore } from '@/store/loading';
+import { showLoading, hideLoading } from '@/store/loading';
 import { alert } from '@/store/alert';
 
 export interface Res<T> {
@@ -38,7 +38,6 @@ axiosInstance.interceptors.request.use((config) => {
  */
 axiosInstance.interceptors.request.use(
   (config) => {
-    const { showLoading } = useLoadingStore();
     showLoading();
     return config;
   },
@@ -48,7 +47,6 @@ axiosInstance.interceptors.request.use(
 );
 axiosInstance.interceptors.response.use(
   (res) => {
-    const { hideLoading } = useLoadingStore();
     hideLoading();
     // extract response data
     return res.data;

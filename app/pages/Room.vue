@@ -23,7 +23,7 @@
     <!-- room toolbox -->
     <div class="room-toolbox-container">
       <v-slide-y-reverse-transition>
-        <RoomToolBox v-if="roomToolboxShow"></RoomToolBox>
+        <RoomToolbox v-if="roomToolboxShow"></RoomToolbox>
       </v-slide-y-reverse-transition>
     </div>
   </v-main>
@@ -34,7 +34,7 @@ import { IS_ELECTRON } from '@/utils/common';
 import { ref, reactive, onMounted, computed } from 'vue';
 import RoomTitle from '@/components/RoomTitle.vue';
 import { RoomInfo, reqGetRoomInfo } from '@/api/room';
-import RoomToolBox from '@/components/RoomToolBox.vue';
+import RoomToolbox from '@/components/RoomToolbox.vue';
 import { useIdle } from '@vueuse/core';
 
 const props = defineProps<{
@@ -79,7 +79,8 @@ const roomTitleContainerTop = {
 // hide when idle for 4s
 const { idle } = useIdle(4 * 1000);
 const roomTitleShow = computed(() => roomInfo.roomStartTime && !idle.value);
-const roomToolboxShow = computed(() => !idle.value);
+// @ATTENTION: toolbox should also hide when fetching room info
+const roomToolboxShow = computed(() => roomInfo.roomStartTime && !idle.value);
 </script>
 
 <style scoped>

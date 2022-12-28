@@ -1,5 +1,15 @@
+/**
+ * common class
+ */
 .clickable:hover {
   cursor: pointer;
+}
+
+/**
+ * style rewrite
+ */
+.v-tooltip .v-overlay__content {
+  font-weight: 300;
 }
 
 /**

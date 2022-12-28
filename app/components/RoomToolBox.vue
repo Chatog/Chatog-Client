@@ -1,26 +1,31 @@
 <template>
   <div class="room-toolbox">
-    <ToolBoxButton
+    <ToolboxButton
       icon="mdi-microphone"
+      hint="microphone"
       :active="micActive"
       @click="toggleMic"
-    ></ToolBoxButton>
-    <ToolBoxButton icon="mdi-camera"></ToolBoxButton>
-    <ToolBoxButton icon="mdi-monitor-share"></ToolBoxButton>
-    <ToolBoxButton icon="mdi-chat"></ToolBoxButton>
-    <ToolBoxButton icon="mdi-account-multiple"></ToolBoxButton>
-    <ToolBoxButton
+    ></ToolboxButton>
+    <ToolboxButton icon="mdi-camera" hint="camera"></ToolboxButton>
+    <ToolboxButton icon="mdi-monitor-share" hint="share screen"></ToolboxButton>
+    <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-account-multiple"
+      hint="room members"
+    ></ToolboxButton>
+    <ToolboxButton
       icon="mdi-phone-hangup-outline"
       icon-color="#fff"
       backgroundColor="#F44336"
+      hint="quit room"
       @click="hangUp"
-    ></ToolBoxButton>
+    ></ToolboxButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import ToolBoxButton from './RoomToolBoxButton.vue';
+import ToolboxButton from './RoomToolboxButton.vue';
 import { ref } from 'vue';
 
 const router = useRouter();

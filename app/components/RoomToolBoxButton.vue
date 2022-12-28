@@ -8,6 +8,9 @@
       'background-color': backgroundColor
     }"
   >
+    <v-tooltip v-if="hint" activator="parent" location="top">{{
+      hint
+    }}</v-tooltip>
     <v-icon :size="size" :color="iconColor">{{ icon }}</v-icon>
   </div>
 </template>

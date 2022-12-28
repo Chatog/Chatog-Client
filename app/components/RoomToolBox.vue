@@ -12,6 +12,8 @@
     <ToolboxButton
       icon="mdi-account-multiple"
       hint="room members"
+      :active="roomMemberPanelShow"
+      @click="toggleRoomMemberPanel"
     ></ToolboxButton>
     <ToolboxButton
       icon="mdi-phone-hangup-outline"
@@ -29,12 +31,19 @@ import ToolboxButton from './RoomToolboxButton.vue';
 import { ref } from 'vue';
 import { showDialog } from '@/store/dialog';
 import { IS_ELECTRON } from '@/utils/common';
+import { useRoomMemberPanelStore } from '@/store/ui';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 
 const micActive = ref(false);
 function toggleMic() {
   micActive.value = !micActive.value;
+}
+
+const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
+function toggleRoomMemberPanel() {
+  roomMemberPanelShow.value = !roomMemberPanelShow.value;
 }
 
 function hangUp() {

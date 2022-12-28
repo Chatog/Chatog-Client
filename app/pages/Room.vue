@@ -14,7 +14,7 @@
     <div class="room-title-container" :style="roomTitleContainerTop">
       <v-slide-y-transition>
         <RoomTitle
-          v-if="roomTitleShow"
+          v-show="roomTitleShow"
           :roomName="roomInfo.roomName"
           :roomStartTime="roomInfo.roomStartTime"
         ></RoomTitle
@@ -23,8 +23,14 @@
     <!-- room toolbox -->
     <div class="room-toolbox-container">
       <v-slide-y-reverse-transition>
-        <RoomToolbox v-if="roomToolboxShow"></RoomToolbox>
+        <RoomToolbox v-show="roomToolboxShow"></RoomToolbox>
       </v-slide-y-reverse-transition>
+    </div>
+    <!-- room member panel -->
+    <div class="room-member-panel-container">
+      <v-slide-x-reverse-transition>
+        <RoomMemberPabel v-show="roomMemberPanelShow"></RoomMemberPabel>
+      </v-slide-x-reverse-transition>
     </div>
   </v-main>
 </template>
@@ -32,10 +38,14 @@
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
 import { ref, reactive, onMounted, computed } from 'vue';
-import RoomTitle from '@/components/RoomTitle.vue';
 import { RoomInfo, reqGetRoomInfo } from '@/api/room';
-import RoomToolbox from '@/components/RoomToolbox.vue';
 import { useIdle } from '@vueuse/core';
+
+import RoomTitle from '@/components/RoomTitle.vue';
+import RoomToolbox from '@/components/RoomToolbox.vue';
+import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
+import { storeToRefs } from 'pinia';
+import { useRoomMemberPanelStore } from '@/store/ui';
 
 const props = defineProps<{
   roomId: string;
@@ -81,6 +91,11 @@ const { idle } = useIdle(4 * 1000);
 const roomTitleShow = computed(() => roomInfo.roomStartTime && !idle.value);
 // @ATTENTION: toolbox should also hide when fetching room info
 const roomToolboxShow = computed(() => roomInfo.roomStartTime && !idle.value);
+
+/**
+ * room member panel
+ */
+const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
 </script>
 
 <style scoped>
@@ -97,5 +112,10 @@ const roomToolboxShow = computed(() => roomInfo.roomStartTime && !idle.value);
   left: 50%;
   transform: translateX(-50%);
   bottom: 32px;
+}
+.room-member-panel-container {
+  position: absolute;
+  right: 0;
+  height: 100%;
 }
 </style>

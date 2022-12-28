@@ -5,13 +5,13 @@
   <!-- alert -->
   <div class="global-alert-container" :style="alertStyle">
     <v-fade-transition>
-      <v-alert class="global-alert" :type="alertType" v-if="alertShow">{{
+      <v-alert class="global-alert" :type="alertType" v-show="alertShow">{{
         alertText
       }}</v-alert></v-fade-transition
     >
   </div>
   <!-- loading -->
-  <div class="global-loading-container" v-if="loadingShow">
+  <div class="global-loading-container" v-show="loadingShow">
     <v-progress-circular
       indeterminate
       size="56"
@@ -21,7 +21,7 @@
   </div>
   <!-- dialog -->
   <div class="global-dialog-container">
-    <v-dialog v-model="dialogShow" width="60%" max-width="300" persistent>
+    <v-dialog v-model="dialogShow" width="60%" max-width="360" persistent>
       <v-card>
         <v-card-title>{{ dialogTitle }}</v-card-title>
         <v-card-text>{{ dialogText }}</v-card-text>

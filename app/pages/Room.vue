@@ -10,23 +10,32 @@
     </v-btn>
   </v-toolbar>
   <v-main class="room__main">
+    <!-- room title -->
     <div class="room-title-container" :style="roomTitleContainerTop">
       <v-slide-y-transition>
         <RoomTitle
-          v-if="roomInfo.roomStartTime !== 0"
+          v-if="roomTitleShow"
           :roomName="roomInfo.roomName"
           :roomStartTime="roomInfo.roomStartTime"
         ></RoomTitle
       ></v-slide-y-transition>
+    </div>
+    <!-- room toolbox -->
+    <div class="room-toolbox-container">
+      <v-slide-y-reverse-transition>
+        <RoomToolBox v-if="roomToolboxShow"></RoomToolBox>
+      </v-slide-y-reverse-transition>
     </div>
   </v-main>
 </template>
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import { ref, reactive, onMounted } from 'vue';
-import RoomTitle from '@/component/RoomTitle.vue';
+import { ref, reactive, onMounted, computed } from 'vue';
+import RoomTitle from '@/components/RoomTitle.vue';
 import { RoomInfo, reqGetRoomInfo } from '@/api/room';
+import RoomToolBox from '@/components/RoomToolBox.vue';
+import { useIdle } from '@vueuse/core';
 
 const props = defineProps<{
   roomId: string;
@@ -63,6 +72,14 @@ function toggleFullScreen() {
 const roomTitleContainerTop = {
   top: IS_ELECTRON ? `${16 + 40}px` : '16px'
 };
+
+/**
+ * room title and room toolbox auto hide
+ */
+// hide when idle for 4s
+const { idle } = useIdle(4 * 1000);
+const roomTitleShow = computed(() => roomInfo.roomStartTime && !idle.value);
+const roomToolboxShow = computed(() => !idle.value);
 </script>
 
 <style scoped>
@@ -73,5 +90,11 @@ const roomTitleContainerTop = {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+.room-toolbox-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 32px;
 }
 </style>

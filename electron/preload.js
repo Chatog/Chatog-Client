@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, app } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
 const EXPORT_NAMESPACE = 'ELECTRON_API';
 
@@ -16,8 +16,7 @@ contextBridge.exposeInMainWorld(EXPORT_NAMESPACE, {
 
 // set initial records save path
 if (window.localStorage.getItem('RECORDS_SAVE_PATH') === null) {
-  window.localStorage.setItem(
-    'RECORDS_SAVE_PATH',
-    `${app.getAppPath()}\\records`
-  );
+  ipcRenderer.invoke('GET_APP_PATH').then((appPath) => {
+    window.localStorage.setItem('RECORDS_SAVE_PATH', `${appPath}\\records`);
+  });
 }

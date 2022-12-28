@@ -149,3 +149,11 @@ ipcMain.handle('MINIMIZE_WINDOW', (e) => {
 ipcMain.handle('SET_FULLSCREEN', (e, full) => {
   window.setFullScreen(full);
 });
+
+/**
+ * GET_APP_PATH
+ * get electron app path
+ */
+ipcMain.handle('GET_APP_PATH', (e) => {
+  return app.getAppPath();
+});

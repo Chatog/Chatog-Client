@@ -16,8 +16,12 @@
       @click="toggleRoomMemberPanel"
     ></ToolboxButton>
     <ToolboxButton
+      icon="mdi-account-plus"
+      hint="invite others"
+      @click="invite"
+    ></ToolboxButton>
+    <ToolboxButton
       icon="mdi-phone-hangup-outline"
-      icon-color="#fff"
       backgroundColor="#F44336"
       hint="quit room"
       @click="hangUp"
@@ -33,6 +37,8 @@ import { showDialog } from '@/store/dialog';
 import { IS_ELECTRON } from '@/utils/common';
 import { useRoomMemberPanelStore } from '@/store/ui';
 import { storeToRefs } from 'pinia';
+import { useRoomStore } from '@/store/room';
+import { alert } from '@/store/alert';
 
 const router = useRouter();
 
@@ -44,6 +50,12 @@ function toggleMic() {
 const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
 function toggleRoomMemberPanel() {
   roomMemberPanelShow.value = !roomMemberPanelShow.value;
+}
+
+const { roomInfo } = storeToRefs(useRoomStore());
+async function invite() {
+  await navigator.clipboard.writeText(roomInfo.value.roomId);
+  alert('success', 'room number copied to clipboard', 2000);
 }
 
 function hangUp() {

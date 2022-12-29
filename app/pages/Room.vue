@@ -37,8 +37,8 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import { ref, reactive, onMounted, computed } from 'vue';
-import { RoomInfo, reqGetRoomInfo } from '@/api/room';
+import { ref, onMounted, computed } from 'vue';
+import { reqGetRoomInfo } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 
 import RoomTitle from '@/components/RoomTitle.vue';
@@ -46,20 +46,16 @@ import RoomToolbox from '@/components/RoomToolbox.vue';
 import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
 import { storeToRefs } from 'pinia';
 import { useRoomMemberPanelStore } from '@/store/ui';
+import { useRoomStore } from '@/store/room';
 
 const props = defineProps<{
   roomId: string;
 }>();
 
-let roomInfo: RoomInfo = reactive({
-  roomId: '',
-  roomName: '',
-  roomStartTime: 0
-});
+const { roomInfo } = storeToRefs(useRoomStore());
 onMounted(async () => {
   const res = await reqGetRoomInfo({ roomId: props.roomId });
-  roomInfo.roomName = res.data.roomName;
-  roomInfo.roomStartTime = res.data.roomStartTime;
+  roomInfo.value = res.data;
 });
 
 /**
@@ -88,9 +84,13 @@ const roomTitleContainerTop = {
  */
 // hide when idle for 4s
 const { idle } = useIdle(4 * 1000);
-const roomTitleShow = computed(() => roomInfo.roomStartTime && !idle.value);
+const roomTitleShow = computed(
+  () => roomInfo.value.roomStartTime && !idle.value
+);
 // @ATTENTION: toolbox should also hide when fetching room info
-const roomToolboxShow = computed(() => roomInfo.roomStartTime && !idle.value);
+const roomToolboxShow = computed(
+  () => roomInfo.value.roomStartTime && !idle.value
+);
 
 /**
  * room member panel

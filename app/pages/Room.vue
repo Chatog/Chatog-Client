@@ -11,7 +11,7 @@
   </v-toolbar>
   <v-main class="room__main">
     <!-- room title -->
-    <div class="room-title-container" :style="roomTitleContainerTop">
+    <div class="room-title-container">
       <v-slide-y-transition>
         <RoomTitle
           v-show="roomTitleShow"
@@ -32,6 +32,20 @@
         <RoomMemberPabel v-show="roomMemberPanelShow"></RoomMemberPabel>
       </v-slide-x-reverse-transition>
     </div>
+    <!-- media panel -->
+    <div
+      class="media-panel-container"
+      :style="{
+        left: mediaPanelShow ? '0' : '-184px'
+      }"
+    >
+      <MediaPanel></MediaPanel>
+      <div class="media-panel-arrow">
+        <v-icon color="#FFF" @click="toggleMediaPanel">{{
+          mediaPanelShow ? 'mdi-chevron-left' : 'mdi-chevron-right'
+        }}</v-icon>
+      </div>
+    </div>
   </v-main>
 </template>
 
@@ -40,13 +54,14 @@ import { IS_ELECTRON } from '@/utils/common';
 import { ref, onMounted, computed } from 'vue';
 import { reqGetRoomInfo } from '@/api/room';
 import { useIdle } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { useMediaPanelStore, useRoomMemberPanelStore } from '@/store/ui';
+import { useRoomStore } from '@/store/room';
 
 import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
 import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
-import { storeToRefs } from 'pinia';
-import { useRoomMemberPanelStore } from '@/store/ui';
-import { useRoomStore } from '@/store/room';
+import MediaPanel from '@/components/MediaPanel.vue';
 
 const props = defineProps<{
   roomId: string;
@@ -73,13 +88,6 @@ function toggleFullScreen() {
 }
 
 /**
- * room title
- */
-const roomTitleContainerTop = {
-  top: IS_ELECTRON ? `${16 + 40}px` : '16px'
-};
-
-/**
  * room title and room toolbox auto hide
  */
 // hide when idle for 4s
@@ -96,15 +104,25 @@ const roomToolboxShow = computed(
  * room member panel
  */
 const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
+
+/**
+ * media panel
+ */
+const { mediaPanelShow } = storeToRefs(useMediaPanelStore());
+function toggleMediaPanel() {
+  mediaPanelShow.value = !mediaPanelShow.value;
+}
 </script>
 
 <style scoped>
 .room__main {
   background-color: rgb(4, 4, 4);
+  position: relative;
 }
 .room-title-container {
   position: absolute;
   left: 50%;
+  top: 16px;
   transform: translateX(-50%);
 }
 .room-toolbox-container {
@@ -117,5 +135,25 @@ const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
   position: absolute;
   right: 0;
   height: 100%;
+}
+.media-panel-container {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  transition: left 0.6s ease-in-out;
+}
+.media-panel-container > div {
+  background-color: #141414;
+}
+.media-panel-arrow {
+  position: absolute;
+  top: 16px;
+  left: 184px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 4px 0;
+}
+.media-panel-arrow:hover {
+  cursor: pointer;
 }
 </style>

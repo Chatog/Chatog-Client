@@ -45,7 +45,7 @@ import { useDialogStore } from '@/store/dialog';
 const { alertType, alertText, alertShow } = storeToRefs(useAlertStore());
 const alertStyle = {
   // must under toolbar in electron
-  top: IS_ELECTRON ? `${64 + 16}px` : '16px'
+  top: IS_ELECTRON ? `${40 + 16}px` : '16px'
 };
 
 const { loadingText, loadingShow } = storeToRefs(useLoadingStore());

@@ -7,7 +7,7 @@
       @click="toggleMic"
     ></ToolboxButton>
     <ToolboxButton icon="mdi-camera" hint="camera"></ToolboxButton>
-    <ToolboxButton icon="mdi-monitor-share" hint="share screen"></ToolboxButton>
+    <ToolboxButton icon="mdi-monitor" hint="share screen"></ToolboxButton>
     <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
     <ToolboxButton
       icon="mdi-account-multiple"

@@ -30,3 +30,20 @@
 .home-form-page button {
   margin-bottom: 16px;
 }
+
+/**
+ * scroll bar
+ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

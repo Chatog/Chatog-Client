@@ -81,7 +81,13 @@ export default ({ command, mode }: ConfigEnv) => {
     server: {
       host: '0.0.0.0',
       port: DevConfig.DEV_SERVER_PORT,
-      open: true
+      open: true,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:8080',
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
     },
     build: {
       // module preload will cause path error in production env due to electron

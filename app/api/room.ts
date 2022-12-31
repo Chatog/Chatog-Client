@@ -14,7 +14,7 @@ export interface ReqCreateRoomRes {
 }
 export async function reqCreateRoom(
   params: ReqCreateRoomParam
-): Promise<Res<ReqCreateRoomRes>> {
+): Promise<Res<RoomInfo>> {
   return await axios.post('/room/create', params);
 }
 
@@ -24,7 +24,7 @@ export interface ReqJoinRoomParam {
 }
 export async function reqJoinRoom(
   params: ReqJoinRoomParam
-): Promise<Res<ReqCreateRoomRes>> {
+): Promise<Res<RoomInfo>> {
   return await axios.post('/room/join', params);
 }
 

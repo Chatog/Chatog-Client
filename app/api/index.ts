@@ -48,8 +48,22 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (res) => {
     hideLoading();
-    // extract response data
-    return res.data;
+    return res;
+  },
+  (err) => {
+    alert('error', err);
+  }
+);
+
+// handle Res
+axiosInstance.interceptors.response.use(
+  (res) => {
+    const r = res.data;
+    if (r.code === 1) {
+      alert('error', r.msg);
+      throw new Error('Request Error');
+    }
+    return r;
   },
   (err) => {
     alert('error', err);

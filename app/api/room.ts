@@ -45,7 +45,7 @@ export async function reqGetRoomInfo(
 export interface ReqGetRoomMembersParam {
   roomId: string;
 }
-export interface RoomMemberVO {
+export interface RoomMember {
   memberId: string;
   nickname: string;
   banVideo: boolean;
@@ -55,6 +55,6 @@ export interface RoomMemberVO {
 }
 export async function reqGetRoomMembers(
   params: ReqGetRoomMembersParam
-): Promise<Res<RoomMemberVO[]>> {
+): Promise<Res<RoomMember[]>> {
   return await axios.get('/room/members', { params });
 }

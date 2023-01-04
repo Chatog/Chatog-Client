@@ -11,12 +11,12 @@
     </div>
     <div class="room-member-panel__actions">
       <v-text-field
+        v-model="searchKey"
         placeholder="search member"
         density="compact"
         :hideDetails="true"
         bgColor="#fff"
         appendInnerIcon="mdi-account-search"
-        :loading="isSearching"
         @click:appendInner.stop="searchMember"
       ></v-text-field>
     </div>
@@ -29,14 +29,19 @@ import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import RoomMemberItem from './room-member-panel/RoomMemberItem.vue';
 
-const { roomMembers } = storeToRefs(useRoomStore());
+const roomStore = useRoomStore();
+const { roomMembers } = storeToRefs(roomStore);
 
-const isSearching = ref(false);
+const searchKey = ref('');
 function searchMember() {
-  isSearching.value = true;
-  setTimeout(() => {
-    isSearching.value = false;
-  }, 1500);
+  if (searchKey.value === '') {
+    roomStore.resetRoomMembers();
+  } else {
+    const searchedRoomMembers = roomMembers.value.filter((member) =>
+      member.nickname.toLowerCase().includes(searchKey.value.toLowerCase())
+    );
+    roomMembers.value = searchedRoomMembers;
+  }
 }
 </script>
 
@@ -48,7 +53,7 @@ function searchMember() {
 
   display: flex;
   flex-direction: column;
-  padding: 16px 24px;
+  padding: 16px 16px;
 }
 .room-member-panel__title {
   color: #fff;

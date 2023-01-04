@@ -67,7 +67,8 @@ const props = defineProps<{
   roomId: string;
 }>();
 
-const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
+const roomStore = useRoomStore();
+const { roomInfo } = storeToRefs(roomStore);
 // fetch room info
 onMounted(async () => {
   const res = await reqGetRoomInfo({ roomId: props.roomId });
@@ -76,8 +77,7 @@ onMounted(async () => {
 // fetch room members
 onMounted(async () => {
   const res = await reqGetRoomMembers({ roomId: props.roomId });
-  roomMembers.value = res.data;
-  console.log(res);
+  roomStore.updateRoomMembers(res.data);
 });
 
 /**

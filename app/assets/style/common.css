@@ -5,6 +5,29 @@
   cursor: pointer;
 }
 
+.chatog-tag {
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 0 8px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border: 1px solid;
+  border-color: #fff;
+  color: #fff;
+  user-select: none;
+}
+.chatog-tag + .chatog-tag {
+  margin-left: 4px;
+}
+
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+
 /**
  * style rewrite
  */

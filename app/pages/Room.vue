@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
 import { ref, onMounted, computed } from 'vue';
-import { reqGetRoomInfo } from '@/api/room';
+import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useMediaPanelStore, useRoomMemberPanelStore } from '@/store/ui';
@@ -67,10 +67,17 @@ const props = defineProps<{
   roomId: string;
 }>();
 
-const { roomInfo } = storeToRefs(useRoomStore());
+const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
+// fetch room info
 onMounted(async () => {
   const res = await reqGetRoomInfo({ roomId: props.roomId });
   roomInfo.value = res.data;
+});
+// fetch room members
+onMounted(async () => {
+  const res = await reqGetRoomMembers({ roomId: props.roomId });
+  roomMembers.value = res.data;
+  console.log(res);
 });
 
 /**

@@ -41,3 +41,20 @@ export async function reqGetRoomInfo(
 ): Promise<Res<RoomInfo>> {
   return await axios.get('/room/info', { params });
 }
+
+export interface ReqGetRoomMembersParam {
+  roomId: string;
+}
+export interface RoomMemberVO {
+  memberId: string;
+  nickname: string;
+  banVideo: boolean;
+  banAudio: boolean;
+  banScreen: boolean;
+  isRoomOwner: boolean;
+}
+export async function reqGetRoomMembers(
+  params: ReqGetRoomMembersParam
+): Promise<Res<RoomMemberVO[]>> {
+  return await axios.get('/room/members', { params });
+}

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { showLoading, hideLoading } from '@/store/loading';
 import { alert } from '@/store/alert';
+import jwtDecode from 'jwt-decode';
+import { useRoomStore } from '@/store/room';
 
 export interface Res<T> {
   code: number;
@@ -22,6 +24,10 @@ axiosInstance.interceptors.response.use((res) => {
     const tokenFromHeader = res.headers['set-auth'];
     if (tokenFromHeader) {
       token = tokenFromHeader;
+      // save memberId
+      const roomStore = useRoomStore();
+      roomStore.myMemberId = jwtDecode<{ sub: string }>(token).sub;
+
       console.log('[api/index.ts] token:', token);
     }
   }

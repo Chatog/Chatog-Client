@@ -1,13 +1,17 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { RoomInfo } from '@/api/room';
+import { RoomInfo, RoomMemberVO } from '@/api/room';
 
 export const useRoomStore = defineStore('room', () => {
+  const myMemberId = ref('');
+
   const roomInfo = ref<RoomInfo>({
     roomId: '',
     roomName: '',
     roomStartTime: 0
   });
 
-  return { roomInfo };
+  const roomMembers = ref<RoomMemberVO[]>([]);
+
+  return { myMemberId, roomInfo, roomMembers };
 });

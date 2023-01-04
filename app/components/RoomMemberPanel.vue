@@ -24,75 +24,12 @@
 </template>
 
 <script setup lang="ts">
+import { useRoomStore } from '@/store/room';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import RoomMemberItem from './room-member-panel/RoomMemberItem.vue';
 
-const roomMembers = ref([
-  {
-    memberId: 0,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 1,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 2,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 3,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 4,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 5,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 6,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 7,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 8,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 9,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 10,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 11,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 12,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 13,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 14,
-    nickname: 'Jessy'
-  },
-  {
-    memberId: 15,
-    nickname: 'Jessy'
-  }
-]);
+const { roomMembers } = storeToRefs(useRoomStore());
 
 const isSearching = ref(false);
 function searchMember() {

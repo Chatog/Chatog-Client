@@ -71,12 +71,12 @@ const roomStore = useRoomStore();
 const { roomInfo } = storeToRefs(roomStore);
 // fetch room info
 onMounted(async () => {
-  const res = await reqGetRoomInfo({ roomId: props.roomId });
+  const res = await reqGetRoomInfo(props.roomId);
   roomInfo.value = res.data;
 });
 // fetch room members
 onMounted(async () => {
-  const res = await reqGetRoomMembers({ roomId: props.roomId });
+  const res = await reqGetRoomMembers(props.roomId);
   roomStore.updateRoomMembers(res.data);
 });
 

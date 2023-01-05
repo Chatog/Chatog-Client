@@ -4,8 +4,13 @@ import { alert } from '@/store/alert';
 import jwtDecode from 'jwt-decode';
 import { useRoomStore } from '@/store/room';
 
+export enum ResCode {
+  SUCCESS = 0,
+  ERROR_MSG = 1
+}
+
 export interface Res<T> {
-  code: number;
+  code: ResCode;
   msg: string;
   data: T;
 }

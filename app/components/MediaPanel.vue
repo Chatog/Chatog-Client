@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import MediaWindow from './MediaWindow.vue';
+import MediaWindow from './media-panel/MediaWindow.vue';
 </script>
 
 <style scoped>

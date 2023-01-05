@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import ToolboxButton from './RoomToolboxButton.vue';
+import ToolboxButton from './room-toolbox/RoomToolboxButton.vue';
 import { ref } from 'vue';
 import { showDialog } from '@/store/dialog';
 import { IS_ELECTRON } from '@/utils/common';
@@ -39,6 +39,8 @@ import { useRoomMemberPanelStore } from '@/store/ui';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
+import { reqQuitRoom } from '@/api/room';
+import { ResCode } from '@/api';
 
 const router = useRouter();
 
@@ -60,11 +62,14 @@ async function invite() {
 
 function hangUp() {
   showDialog('Are you sure to quit room?')
-    .then(() => {
-      if (IS_ELECTRON) {
-        window.ELECTRON_API?.reconfigureWindow('home');
+    .then(async () => {
+      const res = await reqQuitRoom(roomInfo.value.roomId);
+      if (res.code === ResCode.SUCCESS) {
+        if (IS_ELECTRON) {
+          window.ELECTRON_API?.reconfigureWindow('home');
+        }
+        router.push('/home');
       }
-      router.push('/home');
     })
     .catch(() => {});
 }

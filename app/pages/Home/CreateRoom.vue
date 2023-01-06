@@ -57,6 +57,8 @@ import { reqCreateRoom } from '@/api/room';
 import { IS_ELECTRON } from '@/utils/common';
 import { alert } from '@/store/alert';
 import { defaultNickname } from '@/utils/storage';
+import { initSocket } from '@/socket';
+import { selfMemberId } from '@/store/room';
 
 const createRoomForm = reactive({
   nickname: defaultNickname(),
@@ -75,10 +77,20 @@ async function confirm() {
     return;
   }
   const res = await reqCreateRoom(createRoomForm);
-  if (IS_ELECTRON) {
-    window.ELECTRON_API?.reconfigureWindow('room');
-  }
-  router.push(`/room/${res.data.roomId}`);
+  const roomId = res.data.roomId;
+  const memberId = selfMemberId();
+  initSocket(
+    {
+      roomId,
+      memberId
+    },
+    () => {
+      if (IS_ELECTRON) {
+        window.ELECTRON_API?.reconfigureWindow('room');
+      }
+      router.push(`/room/${res.data.roomId}`);
+    }
+  );
 }
 </script>
 

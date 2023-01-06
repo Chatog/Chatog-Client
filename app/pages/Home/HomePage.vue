@@ -58,6 +58,8 @@ import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
 import { alert } from '@/store/alert';
+import { initSocket } from '@/socket';
+import { selfMemberId } from '@/store/room';
 
 function viewRecords() {
   window.ELECTRON_API?.openPath(recordsSavePath());
@@ -80,10 +82,20 @@ async function confirmJoinRoom() {
     return;
   }
   const res = await reqJoinRoom(joinRoomForm);
-  if (IS_ELECTRON) {
-    window.ELECTRON_API?.reconfigureWindow('room');
-  }
-  router.push(`/room/${res.data.roomId}`);
+  const roomId = res.data.roomId;
+  const memberId = selfMemberId();
+  initSocket(
+    {
+      roomId,
+      memberId
+    },
+    () => {
+      if (IS_ELECTRON) {
+        window.ELECTRON_API?.reconfigureWindow('room');
+      }
+      router.push(`/room/${res.data.roomId}`);
+    }
+  );
 }
 </script>
 

@@ -1,6 +1,10 @@
 import axios from '@/api';
+import { socketRequest } from '@/socket';
 import { Res } from '.';
 
+/**
+ * http api
+ */
 export interface ReqCreateRoomParam {
   nickname: string;
   roomName: string;
@@ -25,13 +29,16 @@ export async function reqJoinRoom(
   return await axios.post('/room/join', params);
 }
 
+/**
+ * socket api
+ */
 export interface RoomInfo {
   roomId: string;
   roomName: string;
   roomStartTime: number;
 }
 export async function reqGetRoomInfo(roomId: string): Promise<Res<RoomInfo>> {
-  return await axios.get('/room/info', { params: { roomId } });
+  return socketRequest('/room/info');
 }
 
 export interface RoomMember {
@@ -45,9 +52,9 @@ export interface RoomMember {
 export async function reqGetRoomMembers(
   roomId: string
 ): Promise<Res<RoomMember[]>> {
-  return await axios.get('/room/members', { params: { roomId } });
+  return socketRequest('/room/members');
 }
 
 export async function reqQuitRoom(roomId: string): Promise<Res<void>> {
-  return await axios.post('/room/quit', { roomId });
+  return socketRequest('/room/quit');
 }

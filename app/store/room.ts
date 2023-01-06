@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import { RoomInfo, RoomMember } from '@/api/room';
 
 export const useRoomStore = defineStore('room', () => {
-  const myMemberId = ref('');
-
   const roomInfo = ref<RoomInfo>({
     roomId: '',
     roomName: '',
@@ -24,10 +22,20 @@ export const useRoomStore = defineStore('room', () => {
   };
 
   return {
-    myMemberId,
     roomInfo,
     roomMembers,
     updateRoomMembers,
     resetRoomMembers
   };
 });
+
+/**
+ * self memberId in current room
+ */
+let memberId = '';
+export function selfMemberId(newVal?: string): string {
+  if (newVal) {
+    memberId = newVal;
+  }
+  return memberId;
+}

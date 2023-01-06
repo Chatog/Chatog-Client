@@ -2,7 +2,7 @@ import axios from 'axios';
 import { showLoading, hideLoading } from '@/store/loading';
 import { alert } from '@/store/alert';
 import jwtDecode from 'jwt-decode';
-import { useRoomStore } from '@/store/room';
+import { selfMemberId, useRoomStore } from '@/store/room';
 
 export enum ResCode {
   SUCCESS = 0,
@@ -30,9 +30,7 @@ axiosInstance.interceptors.response.use((res) => {
     if (tokenFromHeader) {
       token = tokenFromHeader;
       // save memberId
-      const roomStore = useRoomStore();
-      roomStore.myMemberId = jwtDecode<{ sub: string }>(token).sub;
-
+      selfMemberId(jwtDecode<{ sub: string }>(token).sub);
       console.log('[api/index.ts] token:', token);
     }
   }
@@ -72,7 +70,7 @@ axiosInstance.interceptors.response.use(
     const r = res.data;
     if (r.code === 1) {
       alert('error', r.msg);
-      throw new Error('Request Error');
+      throw new Error(`[api/index.ts] request error: ${r.msg}}`);
     }
     return r;
   },

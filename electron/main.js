@@ -20,17 +20,10 @@ function initWindow() {
 
   reconfigure('home');
 
-  /**
-   * dev: load localhost url
-   * prod: load static `index.html` file
-   */
+  window.loadFile('index.html');
+
   if (isDev) {
-    const DEV_SERVER_PORT =
-      require('../configs/dev-config.json').DEV_SERVER_PORT;
-    window.loadURL(`http://127.0.0.1:${DEV_SERVER_PORT}`);
     window.webContents.openDevTools();
-  } else {
-    window.loadFile('index.html');
   }
 }
 

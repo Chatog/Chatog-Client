@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chatog</title>
+  </head>
+  <body>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      #chatog {
+        border: none;
+      }
+    </style>
+    <iframe id="chatog" width="100%" height="100%"></iframe>
+    <script>
+      window.onload = () => {
+        const iframe = document.getElementById('chatog');
+        iframe.src = 'http://localhost:3004';
+      };
+    </script>
+  </body>
+</html>

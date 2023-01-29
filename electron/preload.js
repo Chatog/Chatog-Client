@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const EXPORT_NAMESPACE = 'ELECTRON_API';
+const EXPORT_NAMESPACE = 'CHATOG_API';
 
 contextBridge.exposeInMainWorld(EXPORT_NAMESPACE, {
   closeWindow: () => ipcRenderer.invoke('CLOSE_WINDOW'),

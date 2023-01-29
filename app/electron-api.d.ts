@@ -10,6 +10,6 @@ export type ElectronAPI = {
 
 declare global {
   interface Window {
-    ELECTRON_API?: ElectronAPI;
+    CHATOG_API?: ElectronAPI;
   }
 }

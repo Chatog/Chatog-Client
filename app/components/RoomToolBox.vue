@@ -41,6 +41,7 @@ import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
 import { reqQuitRoom } from '@/api/room';
 import { ResCode } from '@/api';
+import { configureHomePageWindow } from '@/modules/electron-api';
 
 const router = useRouter();
 
@@ -63,13 +64,15 @@ async function invite() {
 function hangUp() {
   showDialog('Are you sure to quit room?')
     .then(async () => {
-      const res = await reqQuitRoom(roomInfo.value.roomId);
-      if (res.code === ResCode.SUCCESS) {
-        if (IS_ELECTRON) {
-          window.ELECTRON_API?.reconfigureWindow('home');
-        }
-        router.push('/home');
-      }
+      // const res = await reqQuitRoom(roomInfo.value.roomId);
+      // if (res.code === ResCode.SUCCESS) {
+      //   if (IS_ELECTRON) {
+      //     configureHomePageWindow();
+      //   }
+      //   router.push('/home');
+      // }
+      configureHomePageWindow();
+      router.push('/home');
     })
     .catch(() => {});
 }

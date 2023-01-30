@@ -1,7 +1,13 @@
 <template>
   <v-toolbar v-if="IS_ELECTRON" class="enable-move" height="40">
     <v-spacer></v-spacer>
-    <v-btn icon="mdi-minus" size="32" class="mr-2" @click="minimize"> </v-btn>
+    <v-btn
+      icon="mdi-minus"
+      size="32"
+      class="mr-2"
+      @click="ELECTRON_API.minimizeWindow"
+    >
+    </v-btn>
     <v-btn
       :icon="isFullScreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
       size="32"
@@ -57,6 +63,7 @@ import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useMediaPanelStore, useRoomMemberPanelStore } from '@/store/ui';
 import { useRoomStore } from '@/store/room';
+import ELECTRON_API from '@/modules/electron-api';
 
 import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
@@ -83,15 +90,11 @@ onMounted(async () => {
 /**
  * toolbar
  */
-function minimize() {
-  window.ELECTRON_API?.minimizeWindow();
-}
-
 const isFullScreen = ref(false);
 function toggleFullScreen() {
-  const target = !isFullScreen.value;
-  window.ELECTRON_API?.setFullScreen(target);
-  isFullScreen.value = target;
+  const nextVal = !isFullScreen.value;
+  ELECTRON_API.fullscreenWindow(nextVal);
+  isFullScreen.value = nextVal;
 }
 
 /**

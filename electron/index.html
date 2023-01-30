@@ -17,10 +17,17 @@
       }
     </style>
     <iframe id="chatog" width="100%" height="100%"></iframe>
+    <script src="./sdk/chatog-web-sdk.js"></script>
     <script>
       window.onload = () => {
+        const chatogServiceUrl = 'http://localhost:3004';
+
         const iframe = document.getElementById('chatog');
-        iframe.src = 'http://localhost:3004';
+        iframe.src = chatogServiceUrl;
+        /**
+         * init chatog sdk
+         */
+        window.initChatogWeb && window.initChatogWeb(chatogServiceUrl);
       };
     </script>
   </body>

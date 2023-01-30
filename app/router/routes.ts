@@ -10,10 +10,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/Home/HomePage.vue')
       },
       {
-        path: 'app-config',
-        component: () => import('@/pages/Home/AppConfig.vue')
-      },
-      {
         path: 'create-room',
         component: () => import('@/pages/Home/CreateRoom.vue')
       }

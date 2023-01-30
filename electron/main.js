@@ -5,148 +5,51 @@ const isDev = process.env.NODE_ENV === 'development';
 
 let window = null;
 
-const preload = join(__dirname, './preload.js');
-
 function initWindow() {
-  window = new BrowserWindow({
+  const newWindow = new BrowserWindow({
     webPreferences: {
-      preload
+      preload: join(__dirname, './preload.js'),
+      sandbox: false
     },
     movable: true,
     titleBarStyle: 'hidden'
   });
 
-  window.removeMenu();
+  newWindow.removeMenu();
+  newWindow.setSize(380, 540);
+  newWindow.setResizable(false);
 
-  reconfigure('home');
-
-  window.loadFile('index.html');
+  newWindow.loadFile('index.html');
 
   if (isDev) {
-    window.webContents.openDevTools();
+    newWindow.webContents.openDevTools();
   }
-}
 
-/**
- * reconfigure window
- * twp types: home / room
- */
-function reconfigure(type) {
-  if (!window) return;
-  if (type === 'home') {
-    window.setSize(380, 540);
-    window.setResizable(false);
-  } else if (type === 'room') {
-    window.setSize(1080, 720);
-    window.setResizable(true);
-  }
-  window.center();
+  return newWindow;
 }
 
 app.whenReady().then(() => {
-  initWindow();
+  window = initWindow();
+
+  /**
+   * init chatog sdk
+   */
+  const { initChatogElectronMain } = require('./sdk/chatog-electron-sdk');
+  initChatogElectronMain({
+    window,
+    ipcMain
+  });
 
   app.on('activate', () => {
     const allWindows = BrowserWindow.getAllWindows();
     if (allWindows.length) {
       allWindows[0].focus();
     } else {
-      initWindow();
+      window = initWindow();
     }
   });
 });
 app.on('window-all-closed', () => {
   window = null;
   if (process.platform !== 'darwin') app.quit();
-});
-
-/* API exposed to browser env */
-/**
- * NEW_WINDOW
- * open new window
- * @param {string} url new window's url
- */
-ipcMain.handle('NEW_WINDOW', (e, url) => {
-  const newWindow = new BrowserWindow({
-    webPreferences: {
-      preload
-    }
-  });
-  newWindow.loadURL(url);
-});
-
-/**
- * CLOSE_WINDOW
- * close window
- */
-ipcMain.handle('CLOSE_WINDOW', (e) => {
-  if (window) {
-    window.close();
-  }
-});
-
-/**
- * RECONFIGURE_WINDOW
- * reconfigure window
- * @param {string} type "home" || "room"
- */
-ipcMain.handle('RECONFIGURE_WINDOW', (e, type) => {
-  reconfigure(type);
-});
-
-/**
- * OPEN_PATH
- * open path in system explorer
- * @param {string} path  an absolute dir path
- */
-ipcMain.handle('OPEN_PATH', (e, path) => {
-  const ret = shell.openPath(path);
-  // not return "" means error occurred
-  if (!ret) console.error(ret);
-});
-
-/**
- * SELECT_PATH
- * use system explorer to select a path
- * @param {string} defaultPath default explorer path
- * @param {string} title explorer title
- */
-ipcMain.handle('SELECT_PATH', (e, defaultPath, title) => {
-  return dialog
-    .showOpenDialog(window, {
-      title,
-      defaultPath,
-      properties: ['openDirectory']
-    })
-    .then((r) => {
-      if (r.canceled || r.filePaths.length === 0) {
-        return '';
-      } else {
-        return r.filePaths[0];
-      }
-    });
-});
-
-/**
- * MINIMIZE_WINDOW
- * minimize window
- */
-ipcMain.handle('MINIMIZE_WINDOW', (e) => {
-  window.minimize();
-});
-
-/**
- * SET_FULLSCREEN
- * set window fullscreen or not
- */
-ipcMain.handle('SET_FULLSCREEN', (e, full) => {
-  window.setFullScreen(full);
-});
-
-/**
- * GET_APP_PATH
- * get electron app path
- */
-ipcMain.handle('GET_APP_PATH', (e) => {
-  return app.getAppPath();
 });

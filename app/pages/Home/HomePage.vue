@@ -38,16 +38,6 @@
       @click="$router.push('/home/create-room')"
       >Create Room</v-btn
     >
-
-    <!-- view records: not supported in web -->
-    <div
-      v-if="IS_ELECTRON"
-      class="view-records clickable"
-      style="text-decoration: underline"
-      @click="viewRecords"
-    >
-      view records
-    </div>
   </div>
 </template>
 
@@ -58,12 +48,8 @@ import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
 import { alert } from '@/store/alert';
-import { initSocket } from '@/socket';
 import { selfMemberId } from '@/store/room';
-
-function viewRecords() {
-  window.ELECTRON_API?.openPath(recordsSavePath());
-}
+import { configureRoomPageWindow } from '@/modules/electron-api';
 
 const joinRoomForm = reactive({
   nickname: defaultNickname(),
@@ -81,21 +67,16 @@ async function confirmJoinRoom() {
     alert('warning', 'please enter the room id');
     return;
   }
-  const res = await reqJoinRoom(joinRoomForm);
-  const roomId = res.data.roomId;
-  const memberId = selfMemberId();
-  initSocket(
-    {
-      roomId,
-      memberId
-    },
-    () => {
-      if (IS_ELECTRON) {
-        window.ELECTRON_API?.reconfigureWindow('room');
-      }
-      router.push(`/room/${res.data.roomId}`);
-    }
-  );
+  // reqJoinRoom(joinRoomForm).then((res) => {
+  //   const roomId = res.data.roomId;
+  //   const memberId = selfMemberId();
+  //   if (IS_ELECTRON) {
+  //     configureRoomPageWindow();
+  //   }
+  //   router.push(`/room/${res.data.roomId}`);
+  // });
+  configureRoomPageWindow();
+  router.push(`/room/1`);
 }
 </script>
 

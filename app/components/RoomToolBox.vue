@@ -64,13 +64,13 @@ async function invite() {
 function hangUp() {
   showDialog('Are you sure to quit room?')
     .then(async () => {
-      // const res = await reqQuitRoom(roomInfo.value.roomId);
-      // if (res.code === ResCode.SUCCESS) {
-      //   if (IS_ELECTRON) {
-      //     configureHomePageWindow();
-      //   }
-      //   router.push('/home');
-      // }
+      const res = await reqQuitRoom(roomInfo.value.roomId);
+      if (res.code === ResCode.SUCCESS) {
+        if (IS_ELECTRON) {
+          configureHomePageWindow();
+        }
+        router.push('/home');
+      }
       configureHomePageWindow();
       router.push('/home');
     })

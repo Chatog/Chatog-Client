@@ -77,21 +77,16 @@ async function confirm() {
     alert('warning', 'please enter a room name');
     return;
   }
-  const res = await reqCreateRoom(createRoomForm);
-  const roomId = res.data.roomId;
-  const memberId = selfMemberId();
-  initSocket(
-    {
-      roomId,
-      memberId
-    },
-    () => {
-      if (IS_ELECTRON) {
-        configureRoomPageWindow();
-      }
-      router.push(`/room/${res.data.roomId}`);
+  const res = reqCreateRoom(createRoomForm).then((res) => {
+    const roomId = res.data.roomId;
+    const memberId = selfMemberId();
+    if (IS_ELECTRON) {
+      configureRoomPageWindow();
     }
-  );
+    router.push(`/room/${res.data.roomId}`);
+    // save latest nickname
+    defaultNickname(createRoomForm.nickname);
+  });
 }
 </script>
 

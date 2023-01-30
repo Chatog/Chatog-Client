@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import { defaultNickname, recordsSavePath } from '@/utils/storage';
+import { defaultNickname } from '@/utils/storage';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
@@ -67,16 +67,16 @@ async function confirmJoinRoom() {
     alert('warning', 'please enter the room id');
     return;
   }
-  // reqJoinRoom(joinRoomForm).then((res) => {
-  //   const roomId = res.data.roomId;
-  //   const memberId = selfMemberId();
-  //   if (IS_ELECTRON) {
-  //     configureRoomPageWindow();
-  //   }
-  //   router.push(`/room/${res.data.roomId}`);
-  // });
-  configureRoomPageWindow();
-  router.push(`/room/1`);
+  reqJoinRoom(joinRoomForm).then((res) => {
+    const roomId = res.data.roomId;
+    const memberId = selfMemberId();
+    if (IS_ELECTRON) {
+      configureRoomPageWindow();
+    }
+    router.push(`/room/${res.data.roomId}`);
+    // save latest nickname
+    defaultNickname(joinRoomForm.nickname);
+  });
 }
 </script>
 

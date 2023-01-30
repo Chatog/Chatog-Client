@@ -19,8 +19,5 @@ function defineStringAttr(
   };
 }
 
-const RECORDS_SAVE_PATH = 'RECORDS_SAVE_PATH';
-export const recordsSavePath = defineStringAttr(RECORDS_SAVE_PATH);
-
 const DEFAULT_NICKNAME = 'DEFAULT_NICKNAME';
 export const defaultNickname = defineStringAttr(DEFAULT_NICKNAME, 'FengLiu');

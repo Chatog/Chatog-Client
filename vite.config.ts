@@ -47,7 +47,7 @@ export default ({ command, mode }: ConfigEnv) => {
     server: {
       host: '0.0.0.0',
       port: DevConfig.DEV_SERVER_PORT,
-      open: true,
+      open: false,
       proxy: {
         '/api': {
           target: 'http://localhost:8080',

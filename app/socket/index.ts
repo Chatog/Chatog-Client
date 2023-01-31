@@ -8,26 +8,35 @@ let socket: Socket | null = null;
 
 /**
  * create socket
- * @param auth pass some params to server when connect
- * @param callback execute when socket connected
+ * @param url socket server url
+ * @param memberId member to connect socket
  */
-export function initSocket(auth: any, callback: Function) {
+export function initSocket(url: string, memberId: string): Promise<void> {
   // @TODO: url for dev
-  socket = io('ws://localhost:8080', {
-    auth
+  socket = io(url, {
+    auth: {
+      memberId
+    }
   });
 
-  socket.on('connect', () => {
-    console.log('[socket/index.ts] socket connected');
-    callback();
-  });
+  return new Promise((resolve, reject) => {
+    if (!socket) {
+      reject();
+      return;
+    }
 
-  socket.on('disconnect', () => {
-    console.log('[socket/index.ts] socket disconnected');
-    // @TODO: do some clean jobs
-  });
+    socket.on('connect', () => {
+      console.log('[socket/index.ts] socket connected');
+      resolve();
+    });
 
-  setSocketHandlers(socket);
+    socket.on('disconnect', () => {
+      console.log('[socket/index.ts] socket disconnected');
+      // @TODO: do some clean jobs
+    });
+
+    setSocketHandlers(socket);
+  });
 }
 
 export function socketRequest<P, R>(

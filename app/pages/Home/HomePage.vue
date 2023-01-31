@@ -48,7 +48,6 @@ import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
 import { alert } from '@/store/alert';
-import { selfMemberId } from '@/store/room';
 import { configureRoomPageWindow } from '@/modules/electron-api';
 
 const joinRoomForm = reactive({
@@ -67,13 +66,13 @@ async function confirmJoinRoom() {
     alert('warning', 'please enter the room id');
     return;
   }
+
   reqJoinRoom(joinRoomForm).then((res) => {
-    const roomId = res.data.roomId;
-    const memberId = selfMemberId();
+    const memberId = res.data;
     if (IS_ELECTRON) {
       configureRoomPageWindow();
     }
-    router.push(`/room/${res.data.roomId}`);
+    router.push(`/room/${memberId}`);
     // save latest nickname
     defaultNickname(joinRoomForm.nickname);
   });

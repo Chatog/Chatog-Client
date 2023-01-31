@@ -62,29 +62,37 @@ import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useMediaPanelStore, useRoomMemberPanelStore } from '@/store/ui';
-import { useRoomStore } from '@/store/room';
+import { useRoomStore, selfMemberId } from '@/store/room';
 import ELECTRON_API from '@/modules/electron-api';
 
 import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
 import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
 import MediaPanel from '@/components/MediaPanel.vue';
+import { initSocket } from '@/socket';
 
 const props = defineProps<{
-  roomId: string;
+  memberId: string;
 }>();
+
+selfMemberId(props.memberId);
 
 const roomStore = useRoomStore();
 const { roomInfo } = storeToRefs(roomStore);
-// fetch room info
-onMounted(async () => {
-  const res = await reqGetRoomInfo(props.roomId);
-  roomInfo.value = res.data;
-});
-// fetch room members
-onMounted(async () => {
-  const res = await reqGetRoomMembers(props.roomId);
-  roomStore.updateRoomMembers(res.data);
+
+onMounted(() => {
+  // init socket
+  // @TODO dev url
+  initSocket('ws://localhost:8080', props.memberId).then(() => {
+    // fetch room info
+    reqGetRoomInfo().then((res) => {
+      roomInfo.value = res.data;
+    });
+    // fetch room members
+    reqGetRoomMembers().then((res) => {
+      roomStore.updateRoomMembers(res.data);
+    });
+  });
 });
 
 /**

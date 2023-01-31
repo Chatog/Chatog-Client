@@ -15,7 +15,7 @@ export interface ReqCreateRoomParam {
 }
 export async function reqCreateRoom(
   params: ReqCreateRoomParam
-): Promise<Res<RoomInfo>> {
+): Promise<Res<string>> {
   return await axios.post('/room/create', params);
 }
 
@@ -25,7 +25,7 @@ export interface ReqJoinRoomParam {
 }
 export async function reqJoinRoom(
   params: ReqJoinRoomParam
-): Promise<Res<RoomInfo>> {
+): Promise<Res<string>> {
   return await axios.post('/room/join', params);
 }
 
@@ -37,11 +37,11 @@ export interface RoomInfo {
   roomName: string;
   roomStartTime: number;
 }
-export async function reqGetRoomInfo(roomId: string): Promise<Res<RoomInfo>> {
+export async function reqGetRoomInfo(): Promise<Res<RoomInfo>> {
   return socketRequest('/room/info');
 }
 
-export interface RoomMember {
+export interface RoomMemberVO {
   memberId: string;
   nickname: string;
   banVideo: boolean;
@@ -49,12 +49,10 @@ export interface RoomMember {
   banScreen: boolean;
   isRoomOwner: boolean;
 }
-export async function reqGetRoomMembers(
-  roomId: string
-): Promise<Res<RoomMember[]>> {
+export async function reqGetRoomMembers(): Promise<Res<RoomMemberVO[]>> {
   return socketRequest('/room/members');
 }
 
-export async function reqQuitRoom(roomId: string): Promise<Res<void>> {
+export async function reqQuitRoom(): Promise<Res<void>> {
   return socketRequest('/room/quit');
 }

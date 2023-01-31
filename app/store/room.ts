@@ -3,22 +3,28 @@ import { defineStore } from 'pinia';
 import { RoomInfo, RoomMember } from '@/api/room';
 
 export const useRoomStore = defineStore('room', () => {
+  /**
+   * room info
+   */
   const roomInfo = ref<RoomInfo>({
     roomId: '',
     roomName: '',
     roomStartTime: 0
   });
 
-  let roomMembersStore: RoomMember[] = [];
+  /**
+   * room members
+   */
+  let realRoomMembers: RoomMember[] = [];
   const roomMembers = ref<RoomMember[]>([]);
 
   const updateRoomMembers = (v: RoomMember[]) => {
-    roomMembersStore = v;
+    realRoomMembers = v;
     roomMembers.value = v;
   };
 
   const resetRoomMembers = () => {
-    roomMembers.value = roomMembersStore;
+    roomMembers.value = realRoomMembers;
   };
 
   return {
@@ -32,10 +38,10 @@ export const useRoomStore = defineStore('room', () => {
 /**
  * self memberId in current room
  */
-let memberId = '';
+let selfMemberIdVal = '';
 export function selfMemberId(newVal?: string): string {
   if (newVal) {
-    memberId = newVal;
+    selfMemberIdVal = newVal;
   }
-  return memberId;
+  return selfMemberIdVal;
 }

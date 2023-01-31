@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/room/:roomId',
+    path: '/room/:memberId',
     component: () => import('@/pages/Room.vue'),
     props: true
   },

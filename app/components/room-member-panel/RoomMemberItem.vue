@@ -30,13 +30,12 @@
 </template>
 
 <script setup lang="ts">
-import { RoomMember } from '@/api/room';
-import { storeToRefs } from 'pinia';
+import { RoomMemberVO } from '@/api/room';
 import { toRefs, reactive, computed } from 'vue';
-import { useRoomStore } from '@/store/room';
+import { selfMemberId } from '@/store/room';
 
 const props = defineProps<{
-  roomMember: RoomMember;
+  roomMember: RoomMemberVO;
 }>();
 
 const { roomMember } = toRefs(props);
@@ -46,13 +45,7 @@ const isShow = reactive({
   screen: false
 });
 
-const { myMemberId } = storeToRefs(useRoomStore());
-const isSelf = computed(
-  () =>
-    myMemberId?.value &&
-    roomMember?.value?.memberId &&
-    myMemberId.value === roomMember.value.memberId
-);
+const isSelf = computed(() => selfMemberId() === roomMember.value.memberId);
 
 // room owner no need to show actions
 const actionShow = computed(() => {

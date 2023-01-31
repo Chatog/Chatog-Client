@@ -45,7 +45,9 @@
         ></v-col>
       </v-row>
     </div>
-    <v-btn variant="flat" color="primary" @click="confirm">Confirm</v-btn>
+    <v-btn variant="flat" color="primary" @click="confirmCreateRoom"
+      >Confirm</v-btn
+    >
     <v-btn variant="tonal" @click="$router.push('/home')">Cancel</v-btn>
   </div>
 </template>
@@ -57,8 +59,6 @@ import { reqCreateRoom } from '@/api/room';
 import { IS_ELECTRON } from '@/utils/common';
 import { alert } from '@/store/alert';
 import { defaultNickname } from '@/utils/storage';
-import { initSocket } from '@/socket';
-import { selfMemberId } from '@/store/room';
 import { configureRoomPageWindow } from '@/modules/electron-api';
 
 const createRoomForm = reactive({
@@ -71,19 +71,18 @@ const createRoomForm = reactive({
 });
 
 const router = useRouter();
-async function confirm() {
+async function confirmCreateRoom() {
   // validate
   if (createRoomForm.roomName === '') {
     alert('warning', 'please enter a room name');
     return;
   }
-  const res = reqCreateRoom(createRoomForm).then((res) => {
-    const roomId = res.data.roomId;
-    const memberId = selfMemberId();
+  reqCreateRoom(createRoomForm).then((res) => {
+    const memberId = res.data;
     if (IS_ELECTRON) {
       configureRoomPageWindow();
     }
-    router.push(`/room/${res.data.roomId}`);
+    router.push(`/room/${memberId}`);
     // save latest nickname
     defaultNickname(createRoomForm.nickname);
   });

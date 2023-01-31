@@ -55,24 +55,27 @@ function toggleRoomMemberPanel() {
   roomMemberPanelShow.value = !roomMemberPanelShow.value;
 }
 
+/**
+ * invite
+ */
 const { roomInfo } = storeToRefs(useRoomStore());
 async function invite() {
   await navigator.clipboard.writeText(roomInfo.value.roomId);
   alert('success', 'room number copied to clipboard', 2000);
 }
 
+/**
+ * hang up
+ */
 function hangUp() {
   showDialog('Are you sure to quit room?')
-    .then(async () => {
-      const res = await reqQuitRoom(roomInfo.value.roomId);
-      if (res.code === ResCode.SUCCESS) {
+    .then(() => {
+      reqQuitRoom().then(() => {
         if (IS_ELECTRON) {
           configureHomePageWindow();
         }
         router.push('/home');
-      }
-      configureHomePageWindow();
-      router.push('/home');
+      });
     })
     .catch(() => {});
 }

@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -69,7 +69,7 @@ import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
 import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
 import MediaPanel from '@/components/MediaPanel.vue';
-import { initSocket } from '@/socket';
+import { initSocket, closeSocket } from '@/socket';
 
 const props = defineProps<{
   memberId: string;
@@ -77,8 +77,7 @@ const props = defineProps<{
 
 selfMemberId(props.memberId);
 
-const roomStore = useRoomStore();
-const { roomInfo } = storeToRefs(roomStore);
+const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
 
 onMounted(() => {
   // init socket
@@ -90,9 +89,13 @@ onMounted(() => {
     });
     // fetch room members
     reqGetRoomMembers().then((res) => {
-      roomStore.updateRoomMembers(res.data);
+      roomMembers.value = res.data;
     });
   });
+});
+
+onUnmounted(() => {
+  closeSocket();
 });
 
 /**

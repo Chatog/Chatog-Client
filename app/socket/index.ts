@@ -2,7 +2,7 @@ import { Res, ResCode } from '@/api';
 import { alert } from '@/store/alert';
 import { hideLoading, showLoading } from '@/store/loading';
 import { io, Socket } from 'socket.io-client';
-import { setSocketHandlers } from './eventHandler';
+import { registerSyncHandlers } from './sync';
 
 let socket: Socket | null = null;
 
@@ -35,7 +35,7 @@ export function initSocket(url: string, memberId: string): Promise<void> {
       // @TODO: do some clean jobs
     });
 
-    setSocketHandlers(socket);
+    registerSyncHandlers(socket);
   });
 }
 
@@ -62,4 +62,8 @@ export function socketRequest<P, R>(
       resolve(res);
     });
   });
+}
+
+export function closeSocket() {
+  socket?.close();
 }

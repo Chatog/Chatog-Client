@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { RoomInfo, RoomMember } from '@/api/room';
+import { RoomInfo, RoomMemberVO } from '@/api/room';
 
 export const useRoomStore = defineStore('room', () => {
   /**
@@ -15,23 +15,11 @@ export const useRoomStore = defineStore('room', () => {
   /**
    * room members
    */
-  let realRoomMembers: RoomMember[] = [];
-  const roomMembers = ref<RoomMember[]>([]);
-
-  const updateRoomMembers = (v: RoomMember[]) => {
-    realRoomMembers = v;
-    roomMembers.value = v;
-  };
-
-  const resetRoomMembers = () => {
-    roomMembers.value = realRoomMembers;
-  };
+  const roomMembers = ref<RoomMemberVO[]>([]);
 
   return {
     roomInfo,
-    roomMembers,
-    updateRoomMembers,
-    resetRoomMembers
+    roomMembers
   };
 });
 

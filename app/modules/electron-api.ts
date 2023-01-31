@@ -22,7 +22,8 @@ const ChatogElectronAPIType = {
   MINIMIZE_WINDOW: 'MINIMIZE_WINDOW',
   FULLSCREEN_WINDOW: 'FULLSCREEN_WINDOW',
   RESIZE_WINDOW: 'RESIZE_WINDOW',
-  SET_RESIZABLE: 'SET_RESIZABLE'
+  SET_RESIZABLE: 'SET_RESIZABLE',
+  CENTER_WINDOW: 'CENTER_WINDOW'
 };
 
 const ElectronAPI = {
@@ -53,6 +54,11 @@ const ElectronAPI = {
       type: ChatogElectronAPIType.SET_RESIZABLE,
       payload: resizable
     });
+  },
+  centerWindow() {
+    send({
+      type: ChatogElectronAPIType.CENTER_WINDOW
+    });
   }
 };
 
@@ -62,14 +68,16 @@ export function configureHomePageWindow() {
   ElectronAPI.resizeWindow({
     width: 380,
     height: 540
-  })
-  ElectronAPI.setResizable(false)
+  });
+  ElectronAPI.centerWindow();
+  ElectronAPI.setResizable(false);
 }
 
 export function configureRoomPageWindow() {
   ElectronAPI.resizeWindow({
     width: 1080,
     height: 720
-  })
-  ElectronAPI.setResizable(true)
+  });
+  ElectronAPI.centerWindow();
+  ElectronAPI.setResizable(true);
 }

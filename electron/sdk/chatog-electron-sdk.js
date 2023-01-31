@@ -3,7 +3,8 @@ const ChatogElectronAPIType = {
   MINIMIZE_WINDOW: 'MINIMIZE_WINDOW',
   FULLSCREEN_WINDOW: 'FULLSCREEN_WINDOW',
   RESIZE_WINDOW: 'RESIZE_WINDOW',
-  SET_RESIZABLE: 'SET_RESIZABLE'
+  SET_RESIZABLE: 'SET_RESIZABLE',
+  CENTER_WINDOW: 'CENTER_WINDOW'
 };
 
 function initChatogElectronMain({ window, ipcMain }) {
@@ -61,6 +62,13 @@ function initChatogElectronMain({ window, ipcMain }) {
   ipcMain.handle(ChatogElectronAPIType.SET_RESIZABLE, (_, resizable) => {
     window.setResizable(resizable);
   });
+
+  /**
+   * move window to the center of the screen
+   */
+  ipcMain.handle(ChatogElectronAPIType.CENTER_WINDOW, () => {
+    window.center();
+  });
 }
 
 function initChatogElectronPreload({ ipcRenderer, contextBridge }) {
@@ -79,6 +87,9 @@ function initChatogElectronPreload({ ipcRenderer, contextBridge }) {
     },
     setResizable: (resizable) => {
       ipcRenderer.invoke(ChatogElectronAPIType.SET_RESIZABLE, resizable);
+    },
+    centerWindow: () => {
+      ipcRenderer.invoke(ChatogElectronAPIType.CENTER_WINDOW);
     }
   });
 }

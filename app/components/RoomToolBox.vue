@@ -40,7 +40,6 @@ import { storeToRefs } from 'pinia';
 import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
 import { reqQuitRoom } from '@/api/room';
-import { ResCode } from '@/api';
 import { configureHomePageWindow } from '@/modules/electron-api';
 
 const router = useRouter();
@@ -70,12 +69,7 @@ async function invite() {
 function hangUp() {
   showDialog('Are you sure to quit room?')
     .then(() => {
-      reqQuitRoom().then(() => {
-        if (IS_ELECTRON) {
-          configureHomePageWindow();
-        }
-        router.push('/home');
-      });
+      reqQuitRoom();
     })
     .catch(() => {});
 }

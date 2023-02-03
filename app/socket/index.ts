@@ -1,6 +1,9 @@
 import { Res, ResCode } from '@/api';
+import { configureHomePageWindow } from '@/modules/electron-api';
+import router from '@/plugins/vue-router';
 import { alert } from '@/store/alert';
 import { hideLoading, showLoading } from '@/store/loading';
+import { IS_ELECTRON } from '@/utils/common';
 import { io, Socket } from 'socket.io-client';
 import { registerSyncHandlers } from './sync';
 
@@ -12,7 +15,6 @@ let socket: Socket | null = null;
  * @param memberId member to connect socket
  */
 export function initSocket(url: string, memberId: string): Promise<void> {
-  // @TODO: url for dev
   socket = io(url, {
     auth: {
       memberId
@@ -32,7 +34,12 @@ export function initSocket(url: string, memberId: string): Promise<void> {
 
     socket.on('disconnect', () => {
       console.log('[socket/index.ts] socket disconnected');
-      // @TODO: do some clean jobs
+      socket = null;
+      // @TODO stop media
+      router.push('/');
+      if (IS_ELECTRON) {
+        configureHomePageWindow();
+      }
     });
 
     registerSyncHandlers(socket);

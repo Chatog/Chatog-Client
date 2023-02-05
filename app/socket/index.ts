@@ -14,7 +14,7 @@ let socket: Socket | null = null;
  * @param url socket server url
  * @param memberId member to connect socket
  */
-export function initSocket(url: string, memberId: string): Promise<void> {
+export function initSocket(url: string, memberId: string): Promise<Socket> {
   socket = io(url, {
     auth: {
       memberId
@@ -29,13 +29,12 @@ export function initSocket(url: string, memberId: string): Promise<void> {
 
     socket.on('connect', () => {
       console.log('[socket/index.ts] socket connected');
-      resolve();
+      resolve(socket!);
     });
 
     socket.on('disconnect', () => {
       console.log('[socket/index.ts] socket disconnected');
-      socket = null;
-      // @TODO stop media
+
       router.push('/');
       if (IS_ELECTRON) {
         configureHomePageWindow();

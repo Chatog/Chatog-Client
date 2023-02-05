@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
     return res;
   },
   (err) => {
+    hideLoading();
     alert('error', err);
   }
 );

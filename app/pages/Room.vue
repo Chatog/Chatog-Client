@@ -52,11 +52,13 @@
         }}</v-icon>
       </div>
     </div>
+    <!-- main media -->
+    <MainMedia></MainMedia>
   </v-main>
 </template>
 
 <script setup lang="ts">
-import { IS_ELECTRON } from '@/utils/common';
+import { IS_ELECTRON, memberIdToRoomId } from '@/utils/common';
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
@@ -69,7 +71,9 @@ import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
 import RoomMemberPabel from '@/components/RoomMemberPanel.vue';
 import MediaPanel from '@/components/MediaPanel.vue';
+import MainMedia from '@/components/MainMedia.vue';
 import { initSocket, closeSocket } from '@/socket';
+import MediaManager from '@/media';
 
 const props = defineProps<{
   memberId: string;
@@ -77,12 +81,14 @@ const props = defineProps<{
 
 selfMemberId(props.memberId);
 
+const roomId = memberIdToRoomId(props.memberId);
+
 const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
 
 onMounted(() => {
   // init socket
   // @TODO dev url
-  initSocket('ws://localhost:8080', props.memberId).then(() => {
+  initSocket('ws://localhost:8080', props.memberId).then((socket) => {
     // fetch room info
     reqGetRoomInfo().then((res) => {
       roomInfo.value = res.data;
@@ -91,6 +97,9 @@ onMounted(() => {
     reqGetRoomMembers().then((res) => {
       roomMembers.value = res.data;
     });
+    // init media manager
+    MediaManager.init(socket);
+    MediaManager.joinRouter(roomId);
   });
 });
 

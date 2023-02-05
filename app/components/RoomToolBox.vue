@@ -6,7 +6,12 @@
       :active="micActive"
       @click="toggleMic"
     ></ToolboxButton>
-    <ToolboxButton icon="mdi-camera" hint="camera"></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-camera"
+      hint="camera"
+      :active="cameraActive"
+      @click="toggleCamera"
+    ></ToolboxButton>
     <ToolboxButton icon="mdi-monitor" hint="share screen"></ToolboxButton>
     <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
     <ToolboxButton
@@ -34,21 +39,39 @@ import { useRouter } from 'vue-router';
 import ToolboxButton from './room-toolbox/RoomToolboxButton.vue';
 import { ref } from 'vue';
 import { showDialog } from '@/store/dialog';
-import { IS_ELECTRON } from '@/utils/common';
 import { useRoomMemberPanelStore } from '@/store/ui';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
 import { reqQuitRoom } from '@/api/room';
-import { configureHomePageWindow } from '@/modules/electron-api';
+import { pubCamera, unpubCamera } from '@/modules/media';
 
 const router = useRouter();
 
+/**
+ * mic
+ */
 const micActive = ref(false);
 function toggleMic() {
   micActive.value = !micActive.value;
 }
 
+/**
+ * camera
+ */
+const cameraActive = ref(false);
+async function toggleCamera() {
+  if (cameraActive.value) {
+    await unpubCamera();
+  } else {
+    await pubCamera();
+  }
+  cameraActive.value = !cameraActive.value;
+}
+
+/**
+ * room member
+ */
 const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
 function toggleRoomMemberPanel() {
   roomMemberPanelShow.value = !roomMemberPanelShow.value;

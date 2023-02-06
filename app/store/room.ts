@@ -9,7 +9,8 @@ export const useRoomStore = defineStore('room', () => {
   const roomInfo = ref<RoomInfo>({
     roomId: '',
     roomName: '',
-    roomStartTime: 0
+    roomStartTime: 0,
+    roomOwnerId: ''
   });
 
   /**

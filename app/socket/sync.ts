@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import { Socket } from 'socket.io-client';
 import MediaManager from '@/media';
 import { imediaStreams, useMediaStore } from '@/store/media';
+import { unpubCamera, unpubMic, unpubScreen } from '@/modules/media';
 
 const SYNC_TYPE = {
   SYNC_ROOM_MEMBERS: 'SYNC_ROOM_MEMBERS',
@@ -31,7 +32,13 @@ export function registerSyncHandlers(socket: Socket) {
 
   socket.on(SYNC_TYPE.SYNC_MEDIA, async (info: MediaSyncInfo) => {
     console.debug('[socket/sync.ts] recv:', SYNC_TYPE.SYNC_MEDIA, info);
-    const { remoteMedias, mainMediaId } = storeToRefs(useMediaStore());
+    const {
+      remoteMedias,
+      mainMediaId,
+      localMic,
+      localCameraMedia,
+      localScreenMedia
+    } = storeToRefs(useMediaStore());
     // add single media
     if (info.type === 'add') {
       // if nickname, means init a new imedia
@@ -76,6 +83,25 @@ export function registerSyncHandlers(socket: Socket) {
     }
     // remove single media
     else if (info.type === 'remove') {
+      /**
+       * if local pub stopped via banMedia
+       */
+      if (info.audioId !== '' && info.audioId === localMic.value) {
+        unpubMic();
+      } else if (
+        info.videoId !== '' &&
+        info.videoId === localCameraMedia.value?.videoId
+      ) {
+        unpubCamera();
+      } else if (
+        info.videoId !== '' &&
+        info.videoId === localScreenMedia.value?.videoId
+      ) {
+        unpubScreen();
+      }
+      /**
+       * common remote media change
+       */
       const imedia = remoteMedias.value.find((im) => im.imid === info.imid);
       if (!imedia) {
         console.error(`[socket/sync.ts] media[${info.imid}] not exists`);

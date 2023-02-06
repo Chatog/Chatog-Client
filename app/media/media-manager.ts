@@ -244,12 +244,21 @@ export class MediaManagerClient {
     return consumer.track;
   }
 
-  async unpubMedia(mediaId: string) {
+  unpubMedia(mediaId: string) {
     if (this._producers.has(mediaId)) {
       const producer = this._producers.get(mediaId)!;
       producer.close();
-      await this.socketRequest(SignalingEvent.closeProducer, producer.id);
       this._producers.delete(producer.id);
+      // may fail because server-side producer already closed
+      // but dont care
+      this.socketRequest(SignalingEvent.closeProducer, producer.id).catch(
+        (e) => {
+          console.warn(
+            `[media-manager] close producer[${producer.id}] failed`,
+            e
+          );
+        }
+      );
       return;
     }
   }

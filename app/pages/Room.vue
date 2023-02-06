@@ -108,8 +108,6 @@ onMounted(() => {
       reqGetMediaList().then((res) => {
         MediaStore.updateRemoteMedias(res.data);
       });
-      // auto pub mic
-      pubMic();
     });
   });
 });

@@ -2,8 +2,13 @@ import { IS_ELECTRON } from '@/utils/common';
 import MediaManager from '@/media';
 import { IMediaVO, useMediaStore } from '@/store/media';
 import { selfMemberId } from '@/store/room';
+import { alert } from '@/store/alert';
 
-function initLocalMedia(type: 'chat' | 'screen'): IMediaVO {
+export enum IMediaType {
+  CHAT = 'chat',
+  SCREEN = 'screen'
+}
+function initLocalIMedia(type: IMediaType): IMediaVO {
   const memberId = selfMemberId();
   return {
     imid: memberId + '@' + type,
@@ -18,22 +23,27 @@ function initLocalMedia(type: 'chat' | 'screen'): IMediaVO {
  */
 export async function pubMic() {
   // pub mic audio
-  const mediaStream = await getUserMedia('mic');
+  const mediaStream = await getUserMedia(MediaType.MIC);
   const audioTrack = mediaStream.getAudioTracks()[0];
-  const micId = await MediaManager.pubMedia(audioTrack, {
+  MediaManager.pubMedia(audioTrack, {
     appData: {
-      type: 'mic'
+      type: MediaType.MIC
     }
-  });
-  // update media store
-  const MediaStore = useMediaStore();
-  MediaStore.localMic = micId;
-  MediaStore.localMicMuted = false;
+  })
+    .then((micId) => {
+      // update media store
+      const MediaStore = useMediaStore();
+      MediaStore.localMic = micId;
+      MediaStore.localMicMuted = false;
+    })
+    .catch((e) => {
+      alert('error', e);
+    });
 }
-export async function unpubMic() {
+export function unpubMic() {
   const MediaStore = useMediaStore();
   if (!MediaStore.localMic) return;
-  await MediaManager.unpubMedia(MediaStore.localMic);
+  MediaManager.unpubMedia(MediaStore.localMic);
   MediaStore.localMic = '';
   MediaStore.localMicMuted = true;
 }
@@ -44,22 +54,27 @@ export async function pubCamera() {
   const MediaStore = useMediaStore();
   if (MediaStore.localCameraMedia) return;
   // pub camera media
-  const mediaStream = await getUserMedia('camera');
+  const mediaStream = await getUserMedia(MediaType.CAMERA);
   const videoTrack = mediaStream.getVideoTracks()[0];
-  const cameraId = await MediaManager.pubMedia(videoTrack, {
+  await MediaManager.pubMedia(videoTrack, {
     appData: {
-      type: 'camera'
+      type: MediaType.CAMERA
     }
-  });
-  // update media store
-  const imedia = initLocalMedia('chat');
-  imedia.videoId = cameraId;
-  MediaStore.localCameraMedia = imedia;
+  })
+    .then((cameraId) => {
+      // update media store
+      const imedia = initLocalIMedia(IMediaType.CHAT);
+      imedia.videoId = cameraId;
+      MediaStore.localCameraMedia = imedia;
+    })
+    .catch((e) => {
+      alert('error', e);
+    });
 }
-export async function unpubCamera() {
+export function unpubCamera() {
   const MediaStore = useMediaStore();
   if (!MediaStore.localCameraMedia) return;
-  await MediaManager.unpubMedia(MediaStore.localCameraMedia.videoId);
+  MediaManager.unpubMedia(MediaStore.localCameraMedia.videoId);
   MediaStore.localCameraMedia = null;
 }
 /**
@@ -69,27 +84,37 @@ export async function pubScreen() {
   const MediaStore = useMediaStore();
   if (MediaStore.localScreenMedia) return;
   // pub camera media
-  const mediaStream = await getUserMedia('screen');
+  const mediaStream = await getUserMedia(MediaType.SCREEN);
   const videoTrack = mediaStream.getVideoTracks()[0];
-  const screenId = await MediaManager.pubMedia(videoTrack, {
+  await MediaManager.pubMedia(videoTrack, {
     appData: {
-      type: 'screen'
+      type: MediaType.SCREEN
     }
-  });
-  // update media store
-  const imedia = initLocalMedia('screen');
-  imedia.videoId = screenId;
-  MediaStore.localScreenMedia = imedia;
+  })
+    .then((screenId) => {
+      // update media store
+      const imedia = initLocalIMedia(IMediaType.SCREEN);
+      imedia.videoId = screenId;
+      MediaStore.localScreenMedia = imedia;
+    })
+    .catch((e) => {
+      alert('error', e);
+    });
 }
-export async function unpubScreen() {
+export function unpubScreen() {
   const MediaStore = useMediaStore();
   if (!MediaStore.localScreenMedia) return;
-  await MediaManager.unpubMedia(MediaStore.localScreenMedia.videoId);
+  MediaManager.unpubMedia(MediaStore.localScreenMedia.videoId);
   MediaStore.localScreenMedia = null;
 }
 
+export enum MediaType {
+  MIC = 'mic',
+  CAMERA = 'camera',
+  SCREEN = 'screen'
+}
 export async function getUserMedia(
-  type: 'mic' | 'camera' | 'screen',
+  type: MediaType,
   options?: any
 ): Promise<MediaStream> {
   if (!IS_ELECTRON) {

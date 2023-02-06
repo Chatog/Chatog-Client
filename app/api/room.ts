@@ -36,6 +36,7 @@ export interface RoomInfo {
   roomId: string;
   roomName: string;
   roomStartTime: number;
+  roomOwnerId: string;
 }
 export async function reqGetRoomInfo(): Promise<Res<RoomInfo>> {
   return socketRequest('/room/info');

@@ -10,20 +10,29 @@
     <div class="chatog-tag" v-show="isSelf">Me</div>
     <div class="chatog-tag" v-show="roomMember.isRoomOwner">Owner</div>
 
-    <div class="room-member-item__actions" v-show="actionShow">
-      <v-icon v-show="isShow.mic" class="ml-1" color="#fff" :size="21"
-        >mdi-microphone</v-icon
-      >
-      <v-icon v-show="isShow.camera" class="ml-1" color="#fff" :size="20"
-        >mdi-camera</v-icon
+    <div class="room-member-item__actions" v-show="showMediaControlActions">
+      <v-icon
+        class="ban-mic-btn"
+        color="#fff"
+        :size="20"
+        @click="() => toggleBanMedia(roomMember.banAudio, MediaType.MIC)"
+        >{{
+          roomMember.banAudio ? 'mdi-microphone-off' : 'mdi-microphone'
+        }}</v-icon
       >
       <v-icon
-        style="margin-bottom: 2px"
-        class="ml-2"
-        v-show="isShow.screen"
+        class="ban-camera-btn"
         color="#fff"
-        :size="19"
-        >mdi-monitor</v-icon
+        :size="20"
+        @click="() => toggleBanMedia(roomMember.banVideo, MediaType.CAMERA)"
+        >{{ roomMember.banVideo ? 'mdi-camera-off' : 'mdi-camera' }}</v-icon
+      >
+      <v-icon
+        class="ban-screen-btn"
+        color="#fff"
+        :size="18"
+        @click="() => toggleBanMedia(roomMember.banScreen, MediaType.SCREEN)"
+        >{{ roomMember.banScreen ? 'mdi-monitor-off' : 'mdi-monitor' }}</v-icon
       >
     </div>
   </div>
@@ -31,30 +40,44 @@
 
 <script setup lang="ts">
 import { RoomMemberVO } from '@/api/room';
-import { toRefs, reactive, computed } from 'vue';
-import { selfMemberId } from '@/store/room';
+import { toRefs, computed } from 'vue';
+import { selfMemberId, useRoomStore } from '@/store/room';
+import { storeToRefs } from 'pinia';
+import { MediaType } from '@/modules/media';
+import { reqAllowMedia, reqBanMedia } from '@/api/media';
+import { alert } from '@/store/alert';
 
 const props = defineProps<{
   roomMember: RoomMemberVO;
 }>();
 
 const { roomMember } = toRefs(props);
-const isShow = reactive({
-  mic: false,
-  camera: false,
-  screen: false
-});
+const { roomInfo } = storeToRefs(useRoomStore());
 
 const isSelf = computed(() => selfMemberId() === roomMember.value.memberId);
+const showMediaControlActions = computed(
+  () => selfMemberId() === roomInfo.value.roomOwnerId && !isSelf.value
+);
 
-// room owner no need to show actions
-const actionShow = computed(() => {
-  if (roomMember.value.isRoomOwner) {
-    return false;
+// avoid quick clicks
+let working = false;
+function toggleBanMedia(banNow: boolean, type: MediaType) {
+  if (working) return;
+  if (banNow) {
+    working = true;
+    reqAllowMedia(roomMember.value.memberId, type)
+      .then(() => {
+        alert('success', `${type} allowed`);
+      })
+      .finally(() => (working = false));
   } else {
-    return isShow.mic || isShow.camera || isShow.screen;
+    reqBanMedia(roomMember.value.memberId, type)
+      .then(() => {
+        alert('success', `${type} baned`);
+      })
+      .finally(() => (working = false));
   }
-});
+}
 </script>
 
 <style>
@@ -71,7 +94,18 @@ const actionShow = computed(() => {
 }
 .room-member-item__actions {
   margin-left: auto;
-  /* 4 + 21 + 4 + 20 + 8 + 19 */
-  min-width: 76px;
+  /* 4 + 20 + 4 + 20 + 8 + 18 */
+  min-width: 74px;
+}
+.ban-mic-btn {
+  margin-left: 4px;
+  margin-bottom: 1px;
+}
+.ban-camera-btn {
+  margin-left: 4px;
+}
+.ban-screen-btn {
+  margin-left: 8px;
+  margin-bottom: 1px;
 }
 </style>

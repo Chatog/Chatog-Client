@@ -4,34 +4,107 @@
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
   >
-    <div v-show="isHover" class="media-window__cover">
-      <div class="media-window__stats">
-        <v-icon color="#FFF">mdi-chart-box-outline</v-icon>
-      </div>
-      <div class="media-window__actions">
+    <!-- @TODO local media mute/unmute -->
+    <!-- <div class="media-window__actions">
         <v-icon color="#FFF" class="mb-4" @click.stop="() => {}"
           >mdi-microphone</v-icon
         >
         <v-icon color="#FFF" :size="20" @click.stop="() => {}"
           >mdi-camera</v-icon
         >
-      </div>
+      </div> -->
+
+    <div v-show="isHover" class="media-window__stats">
+      <v-icon color="#FFF">mdi-chart-box-outline</v-icon>
     </div>
 
-    <div class="media-window__name">Jacky</div>
+    <div class="media-window__name">{{ media.nickname }}</div>
 
-    <div v-show="isShowing" class="media-window__showing">
+    <div v-show="isMainMedia" class="media-window__showing">
       <v-icon color="#FFF" :size="32">mdi-arrow-right-bold-box</v-icon>
     </div>
+    <video
+      autoplay
+      playsinline
+      ref="videoRef"
+      class="media-window__video"
+      @click="switchMainMedia"
+    ></video>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { imediaStreams, IMediaVO, useMediaStore } from '@/store/media';
+import { storeToRefs } from 'pinia';
+import {
+  ref,
+  toRefs,
+  computed,
+  onMounted,
+  watchEffect,
+  onBeforeUnmount
+} from 'vue';
+import MediaManager from '@/media';
+
+const props = defineProps<{
+  media: IMediaVO;
+}>();
+const { media } = toRefs(props);
+
+const { mainMediaId } = storeToRefs(useMediaStore());
 
 const isHover = ref(false);
+const isMainMedia = computed(() => media.value.imid === mainMediaId.value);
+const videoRef = ref<HTMLVideoElement | null>(null);
 
-const isShowing = ref(true);
+onMounted(async () => {
+  // sub audio and video track
+  const audioTrack =
+    media.value.audioId !== ''
+      ? await MediaManager.subMedia(media.value.audioId)
+      : null;
+  const videoTrack =
+    media.value.videoId !== ''
+      ? await MediaManager.subMedia(media.value.videoId)
+      : null;
+  // track to playable stream
+  const tracks = [];
+  audioTrack && tracks.push(audioTrack);
+  videoTrack && tracks.push(videoTrack);
+  const stream = new MediaStream(tracks);
+  imediaStreams.set(media.value.imid, stream);
+  // the first media-window should handle main media issue
+  if (mainMediaId.value === '') {
+    mainMediaId.value = media.value.imid;
+  } else if (!isMainMedia.value) {
+    videoRef.value!.srcObject = stream;
+  }
+});
+
+const cleanMainMediaSwitchEffect = watchEffect(() => {
+  if (!videoRef.value) return;
+  if (isMainMedia.value) {
+    // main media not play in window
+    videoRef.value.srcObject = null;
+  } else {
+    videoRef.value.srcObject = imediaStreams.get(media.value.imid) || null;
+  }
+});
+
+onBeforeUnmount(() => {
+  cleanMainMediaSwitchEffect();
+  videoRef.value!.srcObject = null;
+  if (media.value.audioId !== '') MediaManager.unsubMedia(media.value.audioId);
+  if (media.value.videoId !== '') MediaManager.unsubMedia(media.value.videoId);
+  imediaStreams.delete(media.value.imid);
+});
+
+function switchMainMedia() {
+  // already main media
+  if (isMainMedia.value) return;
+
+  mainMediaId.value = media.value.imid;
+}
 </script>
 
 <style>
@@ -79,5 +152,9 @@ const isShowing = ref(true);
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.media-window__video {
+  width: 100%;
+  height: 100%;
 }
 </style>

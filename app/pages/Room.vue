@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON, memberIdToRoomId } from '@/utils/common';
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -74,6 +74,9 @@ import MediaPanel from '@/components/MediaPanel.vue';
 import MainMedia from '@/components/MainMedia.vue';
 import { initSocket, closeSocket } from '@/socket';
 import MediaManager from '@/media';
+import { reqGetMediaList } from '@/api/media';
+import { useMediaStore } from '@/store/media';
+import { pubMic } from '@/modules/media';
 
 const props = defineProps<{
   memberId: string;
@@ -84,6 +87,7 @@ selfMemberId(props.memberId);
 const roomId = memberIdToRoomId(props.memberId);
 
 const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
+const MediaStore = useMediaStore();
 
 onMounted(() => {
   // init socket
@@ -99,11 +103,18 @@ onMounted(() => {
     });
     // init media manager
     MediaManager.init(socket);
-    MediaManager.joinRouter(roomId);
+    MediaManager.joinRouter(roomId).then(() => {
+      // fetch media list
+      reqGetMediaList().then((res) => {
+        MediaStore.updateRemoteMedias(res.data);
+      });
+      // auto pub mic
+      pubMic();
+    });
   });
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   closeSocket();
 });
 
@@ -154,23 +165,27 @@ function toggleMediaPanel() {
   left: 50%;
   top: 16px;
   transform: translateX(-50%);
+  z-index: 10;
 }
 .room-toolbox-container {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: 32px;
+  z-index: 10;
 }
 .room-member-panel-container {
   position: absolute;
   right: 0;
   height: 100%;
+  z-index: 11;
 }
 .media-panel-container {
   position: absolute;
   left: 0;
   height: 100%;
   transition: left 0.6s ease-in-out;
+  z-index: 11;
 }
 .media-panel-container > div {
   background-color: #141414;

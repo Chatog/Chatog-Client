@@ -9,6 +9,6 @@ export const useRoomMemberPanelStore = defineStore('room-member-panel', () => {
 });
 
 export const useMediaPanelStore = defineStore('media-panel', () => {
-  const mediaPanelShow = ref(true);
+  const mediaPanelShow = ref(false);
   return { mediaPanelShow };
 });

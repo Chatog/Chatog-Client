@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { formatTimeHMS } from '@/utils/time';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 const props = defineProps<{
   roomName: string;
   roomStartTime: number;
@@ -21,7 +21,7 @@ onMounted(() => {
     roomLastTime.value = formatTimeHMS(Date.now() - props.roomStartTime);
   }, 1000);
 });
-onUnmounted(() => {
+onBeforeUnmount(() => {
   if (roomLastTimer) roomLastTimer = null;
 });
 </script>

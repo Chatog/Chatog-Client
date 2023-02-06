@@ -3,16 +3,21 @@
     <ToolboxButton
       icon="mdi-microphone"
       hint="microphone"
-      :active="micActive"
-      @click="toggleMic"
+      :active="!localMicMuted"
+      @click="toggleMuteMic"
     ></ToolboxButton>
     <ToolboxButton
       icon="mdi-camera"
       hint="camera"
       :active="cameraActive"
-      @click="toggleCamera"
+      @click="togglePubCamera"
     ></ToolboxButton>
-    <ToolboxButton icon="mdi-monitor" hint="share screen"></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-monitor"
+      hint="share screen"
+      :active="screenActive"
+      @click="togglePubScreen"
+    ></ToolboxButton>
     <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
     <ToolboxButton
       icon="mdi-account-multiple"
@@ -35,38 +40,70 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import ToolboxButton from './room-toolbox/RoomToolboxButton.vue';
-import { ref } from 'vue';
+import { computed } from 'vue';
 import { showDialog } from '@/store/dialog';
 import { useRoomMemberPanelStore } from '@/store/ui';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
 import { reqQuitRoom } from '@/api/room';
-import { pubCamera, unpubCamera } from '@/modules/media';
+import {
+  pubMic,
+  pubCamera,
+  unpubCamera,
+  unpubScreen,
+  pubScreen
+} from '@/modules/media';
+import { useMediaStore } from '@/store/media';
+import MediaManager from '@/media';
 
-const router = useRouter();
+const { localMic, localMicMuted, localCameraMedia, localScreenMedia } =
+  storeToRefs(useMediaStore());
 
 /**
  * mic
  */
-const micActive = ref(false);
-function toggleMic() {
-  micActive.value = !micActive.value;
+async function toggleMuteMic() {
+  // if no mic, just pub
+  if (localMic.value === '') {
+    await pubMic();
+    return;
+  }
+  // toggle local mic track.enabled
+  const track = MediaManager.getMediaTrack(localMic.value);
+  if (!track) return;
+  if (localMicMuted.value) {
+    track.enabled = true;
+    localMicMuted.value = false;
+  } else {
+    track.enabled = false;
+    localMicMuted.value = true;
+  }
 }
 
 /**
  * camera
  */
-const cameraActive = ref(false);
-async function toggleCamera() {
+const cameraActive = computed(() => localCameraMedia.value !== null);
+async function togglePubCamera() {
   if (cameraActive.value) {
     await unpubCamera();
   } else {
     await pubCamera();
   }
-  cameraActive.value = !cameraActive.value;
+}
+
+/**
+ * screen
+ */
+const screenActive = computed(() => localScreenMedia.value !== null);
+async function togglePubScreen() {
+  if (screenActive.value) {
+    await unpubScreen();
+  } else {
+    await pubScreen();
+  }
 }
 
 /**

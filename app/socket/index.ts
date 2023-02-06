@@ -35,10 +35,10 @@ export function initSocket(url: string, memberId: string): Promise<Socket> {
     socket.on('disconnect', () => {
       console.log('[socket/index.ts] socket disconnected');
 
-      router.push('/');
       if (IS_ELECTRON) {
         configureHomePageWindow();
       }
+      router.push('/home');
     });
 
     registerSyncHandlers(socket);
@@ -53,9 +53,10 @@ export function socketRequest<P, R>(
     if (!socket) {
       throw new Error('[socket/index.ts] socket not valid');
     }
-
+    console.debug('[socketRequest] send:', eventName, params);
     showLoading();
     socket.emit(eventName, params, (res: Res<R>) => {
+      console.debug('[socketRequest] recv:', eventName, res);
       hideLoading();
       if (res.code === ResCode.ERROR_MSG) {
         alert('error', res.msg);

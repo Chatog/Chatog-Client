@@ -85,6 +85,9 @@ export class MediaManagerClient {
   private initSignaling(socket: Socket) {
     // clean media transports when signaling disconnects
     socket.on('disconnect', () => {
+      console.log(
+        '[media-manager] clean transport when signlaing client disconnect'
+      );
       if (this._sendTransport) {
         this._sendTransport.close();
         this._sendTransport = null;
@@ -170,12 +173,14 @@ export class MediaManagerClient {
   }
 
   async joinRouter(routerId: string) {
-    const routerRtpCapabilities = await this.socketRequest<RtpCapabilities>(
-      SignalingEvent.getRouterCapabilities,
-      routerId
-    );
     // negotiate with server capavilities
-    await this._device.load({ routerRtpCapabilities });
+    if (!this._device.loaded) {
+      const routerRtpCapabilities = await this.socketRequest<RtpCapabilities>(
+        SignalingEvent.getRouterCapabilities,
+        routerId
+      );
+      await this._device.load({ routerRtpCapabilities });
+    }
 
     await this.socketRequest(SignalingEvent.joinRouter, {
       routerId,
@@ -210,6 +215,10 @@ export class MediaManagerClient {
     mediaId: string,
     options?: ServerConsumerOptions
   ): Promise<MediaStreamTrack> {
+    // if sub local media, directly return
+    if (this._producers.has(mediaId)) {
+      return this._producers.get(mediaId)!.track!;
+    }
     // ensure _recvTransport
     if (!this._recvTransport) {
       await this.createRecvTransport();
@@ -243,6 +252,12 @@ export class MediaManagerClient {
       this._producers.delete(producer.id);
       return;
     }
+  }
+
+  async unsubMedia(mediaId: string) {
+    // if local, no need to unsub
+    if (this._producers.has(mediaId)) return;
+
     if (this._consumers.has(mediaId)) {
       const consumer = this._consumers.get(mediaId)!;
       consumer.close();
@@ -259,5 +274,12 @@ export class MediaManagerClient {
     return producerOrConsumer
       ? producerOrConsumer.getStats()
       : Promise.reject('[media-manager] cannot find media');
+  }
+
+  getMediaTrack(mediaId: string): MediaStreamTrack | null {
+    let producerOrConsumer: Producer | Consumer | undefined;
+    producerOrConsumer = this._producers.get(mediaId);
+    if (!producerOrConsumer) producerOrConsumer = this._consumers.get(mediaId);
+    return producerOrConsumer ? producerOrConsumer.track : null;
   }
 }

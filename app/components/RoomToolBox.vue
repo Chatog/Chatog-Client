@@ -18,6 +18,12 @@
       :active="screenActive"
       @click="togglePubScreen"
     ></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-radiobox-marked"
+      hint="local record"
+      :active="isRecording"
+      @click="toggleRecord"
+    ></ToolboxButton>
     <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
     <ToolboxButton
       icon="mdi-account-multiple"
@@ -43,7 +49,7 @@
 import ToolboxButton from './room-toolbox/RoomToolboxButton.vue';
 import { computed } from 'vue';
 import { showDialog } from '@/store/dialog';
-import { useRoomMemberPanelStore } from '@/store/ui';
+import { useUIStore } from '@/store/ui';
 import { storeToRefs } from 'pinia';
 import { useRoomStore } from '@/store/room';
 import { alert } from '@/store/alert';
@@ -57,9 +63,16 @@ import {
 } from '@/modules/media';
 import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
+import RecordAgent from '@/modules/record-agent';
 
-const { localMic, localMicMuted, localCameraMedia, localScreenMedia } =
-  storeToRefs(useMediaStore());
+const { roomMemberPanelShow, recordDialogShow } = storeToRefs(useUIStore());
+const {
+  localMic,
+  localMicMuted,
+  localCameraMedia,
+  localScreenMedia,
+  isRecording
+} = storeToRefs(useMediaStore());
 
 /**
  * mic
@@ -107,9 +120,29 @@ async function togglePubScreen() {
 }
 
 /**
+ * record
+ */
+function toggleRecord() {
+  if (isRecording.value) {
+    showDialog('Are you sure to stop recording and save?')
+      .then(() => {
+        RecordAgent.stopRecord();
+        isRecording.value = RecordAgent.isRecording();
+      })
+      .catch(() => {});
+  } else {
+    console.log(localMic.value, cameraActive.value, screenActive.value);
+    if (localMic.value === '' && !cameraActive.value && !screenActive.value) {
+      alert('warning', "you havn't pub any media");
+      return;
+    }
+    recordDialogShow.value = true;
+  }
+}
+
+/**
  * room member
  */
-const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
 function toggleRoomMemberPanel() {
   roomMemberPanelShow.value = !roomMemberPanelShow.value;
 }

@@ -54,6 +54,12 @@
     </div>
     <!-- main media -->
     <MainMedia></MainMedia>
+    <!-- record dialog -->
+    <RecordDialog></RecordDialog>
+    <!-- record hint -->
+    <div class="record-hint-container" v-show="MediaStore.isRecording">
+      <RecordHint></RecordHint>
+    </div>
   </v-main>
 </template>
 
@@ -63,7 +69,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { reqGetRoomInfo, reqGetRoomMembers } from '@/api/room';
 import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useMediaPanelStore, useRoomMemberPanelStore } from '@/store/ui';
+import { useUIStore } from '@/store/ui';
 import { useRoomStore, selfMemberId } from '@/store/room';
 import ELECTRON_API from '@/modules/electron-api';
 
@@ -76,7 +82,8 @@ import { initSocket, closeSocket } from '@/socket';
 import MediaManager from '@/media';
 import { reqGetMediaList } from '@/api/media';
 import { useMediaStore } from '@/store/media';
-import { pubMic } from '@/modules/media';
+import RecordDialog from '@/components/RecordDialog.vue';
+import RecordHint from '@/components/RecordHint.vue';
 
 const props = defineProps<{
   memberId: string;
@@ -86,6 +93,7 @@ selfMemberId(props.memberId);
 
 const roomId = memberIdToRoomId(props.memberId);
 
+const { mediaPanelShow, roomMemberPanelShow } = storeToRefs(useUIStore());
 const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
 const MediaStore = useMediaStore();
 
@@ -142,12 +150,10 @@ const roomToolboxShow = computed(
 /**
  * room member panel
  */
-const { roomMemberPanelShow } = storeToRefs(useRoomMemberPanelStore());
 
 /**
  * media panel
  */
-const { mediaPanelShow } = storeToRefs(useMediaPanelStore());
 function toggleMediaPanel() {
   mediaPanelShow.value = !mediaPanelShow.value;
 }
@@ -195,8 +201,15 @@ function toggleMediaPanel() {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   padding: 4px 0;
+  z-index: 11;
 }
 .media-panel-arrow:hover {
   cursor: pointer;
+}
+.record-hint-container {
+  position: absolute;
+  z-index: 10;
+  top: 16px;
+  right: 16px;
 }
 </style>

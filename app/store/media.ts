@@ -17,15 +17,21 @@ export const useMediaStore = defineStore('media', () => {
   const localCameraMedia = ref<IMediaVO | null>(null);
   const localScreenMedia = ref<IMediaVO | null>(null);
   const remoteMedias = ref<IMediaVO[]>([]);
-  /**
-   * main media
-   */
-  const mainMediaId = ref('');
 
   function updateRemoteMedias(mediaList: IMediaVO[]) {
     remoteMedias.value = mediaList;
     // dont set mainMediaId, the first media-item will do this
   }
+
+  /**
+   * main media
+   */
+  const mainMediaId = ref('');
+
+  /**
+   * record
+   */
+  const isRecording = ref(false);
 
   return {
     localMic,
@@ -34,6 +40,7 @@ export const useMediaStore = defineStore('media', () => {
     localScreenMedia,
     remoteMedias,
     mainMediaId,
+    isRecording,
 
     updateRemoteMedias
   };

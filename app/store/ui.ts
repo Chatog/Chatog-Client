@@ -1,14 +1,14 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useRoomMemberPanelStore = defineStore('room-member-panel', () => {
+export const useUIStore = defineStore('ui', () => {
   const roomMemberPanelShow = ref(false);
-  return {
-    roomMemberPanelShow
-  };
-});
-
-export const useMediaPanelStore = defineStore('media-panel', () => {
   const mediaPanelShow = ref(false);
-  return { mediaPanelShow };
+  const recordDialogShow = ref(false);
+
+  return {
+    roomMemberPanelShow,
+    mediaPanelShow,
+    recordDialogShow
+  };
 });

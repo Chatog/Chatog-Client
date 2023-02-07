@@ -19,3 +19,25 @@ export function formatTimeHMS(time: number): string {
   res += s < 10 ? `0${s}` : s;
   return res;
 }
+
+/**
+ * format time
+ * @param date new Date()
+ * @returns YYYY-MM-DD-HH:MM:SS
+ */
+export function formatDate(date: Date): string {
+  return (
+    date.toLocaleDateString().replaceAll(/\//g, '-') +
+    '@' +
+    date.toTimeString().substring(0, 8)
+  );
+}
+
+/**
+ * time from before to now
+ * @param timeBefore ms
+ * @returns HH:MM:SS
+ */
+export function timeFrom(timeBefore: number): string {
+  return formatTimeHMS(Date.now() - timeBefore);
+}

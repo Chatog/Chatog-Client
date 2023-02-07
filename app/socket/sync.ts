@@ -41,6 +41,16 @@ export function registerSyncHandlers(socket: Socket) {
     } = storeToRefs(useMediaStore());
     // add single media
     if (info.type === 'add') {
+      // ignore local media sync
+      if (
+        (info.audioId !== '' && info.audioId === localMic.value) ||
+        (info.videoId !== '' &&
+          info.videoId === localCameraMedia.value?.videoId) ||
+        (info.videoId !== '' &&
+          info.videoId === localScreenMedia.value?.videoId)
+      ) {
+        return;
+      }
       // if nickname, means init a new imedia
       if (info.nickname) {
         const imedia = {
@@ -58,15 +68,16 @@ export function registerSyncHandlers(socket: Socket) {
       // add single video/audio to a existing imedia
       else {
         const imedia = remoteMedias.value.find((im) => im.imid === info.imid);
+        // @TODO FIX
+        // 100% reproduct when unpub camera/screen, because local state
+        // cleaned before sync message received
         if (!imedia) {
-          console.error(`[socket/sync.ts] media[${info.imid}] not exists`);
+          console.warn(`[socket/sync.ts] media[${info.imid}] not exists`);
           return;
         }
         const mediaStream = imediaStreams.get(imedia.imid);
         if (!mediaStream) {
-          console.error(
-            `[socket/sync.ts] mediaStream[${info.imid}] not exists`
-          );
+          console.warn(`[socket/sync.ts] mediaStream[${info.imid}] not exists`);
           return;
         }
         if (info.audioId) {
@@ -88,16 +99,19 @@ export function registerSyncHandlers(socket: Socket) {
        */
       if (info.audioId !== '' && info.audioId === localMic.value) {
         unpubMic();
+        return;
       } else if (
         info.videoId !== '' &&
         info.videoId === localCameraMedia.value?.videoId
       ) {
         unpubCamera();
+        return;
       } else if (
         info.videoId !== '' &&
         info.videoId === localScreenMedia.value?.videoId
       ) {
         unpubScreen();
+        return;
       }
       /**
        * common remote media change

@@ -52,14 +52,22 @@
         }}</v-icon>
       </div>
     </div>
-    <!-- main media -->
-    <MainMedia></MainMedia>
+    <!-- chat panel -->
+    <div class="room-member-panel-container">
+      <v-slide-x-reverse-transition>
+        <ChatPanel v-show="chatPanelShow"></ChatPanel>
+      </v-slide-x-reverse-transition>
+    </div>
+
     <!-- record dialog -->
     <RecordDialog></RecordDialog>
     <!-- record hint -->
     <div class="record-hint-container" v-show="MediaStore.isRecording">
       <RecordHint></RecordHint>
     </div>
+
+    <!-- main media -->
+    <MainMedia></MainMedia>
   </v-main>
 </template>
 
@@ -84,6 +92,7 @@ import { reqGetMediaList } from '@/api/media';
 import { useMediaStore } from '@/store/media';
 import RecordDialog from '@/components/RecordDialog.vue';
 import RecordHint from '@/components/RecordHint.vue';
+import ChatPanel from '@/components/ChatPanel.vue';
 
 const props = defineProps<{
   memberId: string;
@@ -93,7 +102,9 @@ selfMemberId(props.memberId);
 
 const roomId = memberIdToRoomId(props.memberId);
 
-const { mediaPanelShow, roomMemberPanelShow } = storeToRefs(useUIStore());
+const { mediaPanelShow, roomMemberPanelShow, chatPanelShow } = storeToRefs(
+  useUIStore()
+);
 const { roomInfo, roomMembers } = storeToRefs(useRoomStore());
 const MediaStore = useMediaStore();
 

@@ -5,10 +5,12 @@ import { Socket } from 'socket.io-client';
 import MediaManager from '@/media';
 import { imediaStreams, useMediaStore } from '@/store/media';
 import { unpubCamera, unpubMic, unpubScreen } from '@/modules/media';
+import { ChatMsg, ChatMsgState, useChatStore } from '@/store/chat';
 
 const SYNC_TYPE = {
   SYNC_ROOM_MEMBERS: 'SYNC_ROOM_MEMBERS',
-  SYNC_MEDIA: 'SYNC_MEDIA'
+  SYNC_MEDIA: 'SYNC_MEDIA',
+  SYNC_CHAT_MSG: 'SYNC_CHAT_MSG'
 };
 
 export interface MediaSyncInfo {
@@ -152,5 +154,36 @@ export function registerSyncHandlers(socket: Socket) {
         await MediaManager.unsubMedia(info.videoId);
       }
     }
+  });
+
+  socket.on(SYNC_TYPE.SYNC_CHAT_MSG, (msg: ChatMsg) => {
+    console.debug('[socket/sync.ts] recv:', SYNC_TYPE.SYNC_MEDIA, msg);
+
+    const ChatStore = useChatStore();
+    const messages = [...ChatStore.messages];
+    // add remote msg or update local msg
+    const localMsg = messages.find((m) => m.msgId === msg.localId);
+    if (localMsg) {
+      localMsg.time = msg.time;
+      localMsg.state = msg.state;
+    } else {
+      messages.push(msg);
+    }
+
+    // reorder message
+    const confirmedMessages: ChatMsg[] = [];
+    const sendingMessages: ChatMsg[] = [];
+    for (const message of messages) {
+      if (message.state === ChatMsgState.SENDING) {
+        sendingMessages.push(message);
+      } else {
+        confirmedMessages.push(message);
+      }
+    }
+    const sortedMessages = confirmedMessages
+      .sort((m1, m2) => m1.time - m2.time)
+      .concat(sendingMessages.sort((m1, m2) => m1.time - m2.time));
+
+    ChatStore.messages = sortedMessages;
   });
 }

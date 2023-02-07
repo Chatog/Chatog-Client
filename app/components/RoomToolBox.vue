@@ -24,7 +24,12 @@
       :active="isRecording"
       @click="toggleRecord"
     ></ToolboxButton>
-    <ToolboxButton icon="mdi-chat" hint="online chat"></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-chat"
+      hint="online chat"
+      :active="chatPanelShow"
+      @click="toggleChatPanel"
+    ></ToolboxButton>
     <ToolboxButton
       icon="mdi-account-multiple"
       hint="room members"
@@ -65,7 +70,9 @@ import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
 import RecordAgent from '@/modules/record-agent';
 
-const { roomMemberPanelShow, recordDialogShow } = storeToRefs(useUIStore());
+const UIStore = useUIStore();
+const { roomMemberPanelShow, recordDialogShow, chatPanelShow } =
+  storeToRefs(UIStore);
 const {
   localMic,
   localMicMuted,
@@ -144,7 +151,14 @@ function toggleRecord() {
  * room member
  */
 function toggleRoomMemberPanel() {
-  roomMemberPanelShow.value = !roomMemberPanelShow.value;
+  UIStore.toggleRoomMemberPanelShow();
+}
+
+/**
+ * chat
+ */
+function toggleChatPanel() {
+  UIStore.toggleChatPanelShow();
 }
 
 /**

@@ -18,3 +18,10 @@ export function memberIdToRoomId(memberId: string): string {
   }
   return memberId.substring(0, lastAtIndex);
 }
+
+/**
+ * bytes/s => kb/s
+ */
+export function BpsToKbps(value: number): number {
+  return (value * 8) / 1000;
+}

@@ -43,8 +43,12 @@ export class MediaManagerClient {
   private _device: Device;
   private _sendTransport: Transport | null = null;
   private _recvTransport: Transport | null = null;
+  // producerId => Producer
   private _producers: Map<string, Producer> = new Map();
+  // producerId => Consumer
   private _consumers: Map<string, Consumer> = new Map();
+  // producerId => consumerId
+  private _consumerIds: Map<string, string> = new Map();
 
   private _signalingClient?: Socket;
 
@@ -234,9 +238,11 @@ export class MediaManagerClient {
     // create client-side consumer
     const consumer = await this._recvTransport?.consume(consumerOptions);
     if (!consumer) throw new Error('[media-manager] create consumer failed');
-    this._consumers.set(consumer.id, consumer);
+    this._consumers.set(mediaId, consumer);
+    this._consumerIds.set(mediaId, consumer.id);
     consumer.on('transportclose', () => {
-      this._consumers.delete(consumer.id);
+      this._consumers.delete(mediaId);
+      this._consumerIds.delete(mediaId);
     });
     // after consumer created, resume server-side consumer
     await this.socketRequest(SignalingEvent.resumeConsumer, consumer.id);
@@ -270,8 +276,13 @@ export class MediaManagerClient {
     if (this._consumers.has(mediaId)) {
       const consumer = this._consumers.get(mediaId)!;
       consumer.close();
-      await this.socketRequest(SignalingEvent.closeConsumer, consumer.id);
-      this._consumers.delete(consumer.id);
+      // @FIX closeConsumer BUG
+      // await this.socketRequest(
+      //   SignalingEvent.closeConsumer,
+      //   this._consumerIds.get(mediaId)!
+      // );
+      this._consumers.delete(mediaId);
+      this._consumerIds.delete(mediaId);
       return;
     }
   }

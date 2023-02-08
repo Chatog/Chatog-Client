@@ -4,6 +4,12 @@
     @mouseenter="isHover = true"
     @mouseleave="isHover = false"
   >
+    <MediaStats
+      class="media-window__stats"
+      v-show="isHover"
+      :media="media"
+    ></MediaStats>
+
     <!-- @TODO local media mute/unmute -->
     <!-- <div class="media-window__actions">
         <v-icon color="#FFF" class="mb-4" @click.stop="() => {}"
@@ -13,10 +19,6 @@
           >mdi-camera</v-icon
         >
       </div> -->
-
-    <div v-show="isHover" class="media-window__stats">
-      <v-icon color="#FFF">mdi-chart-box-outline</v-icon>
-    </div>
 
     <div class="media-window__name">{{ media.nickname }}</div>
 
@@ -42,9 +44,13 @@ import {
   computed,
   onMounted,
   watchEffect,
-  onBeforeUnmount
+  onBeforeUnmount,
+  onUnmounted
 } from 'vue';
 import MediaManager from '@/media';
+import MediaStats from './MediaStats.vue';
+import StatsAgent from '@/modules/stats-agent';
+import { imediaStatsMap } from '@/store/media-control';
 
 const props = defineProps<{
   media: IMediaVO;
@@ -79,6 +85,11 @@ onMounted(async () => {
   } else if (!isMainMedia.value) {
     videoRef.value!.srcObject = stream;
   }
+  // after media ready, begin stats collection
+  const report = imediaStatsMap.get(media.value.imid)!;
+  StatsAgent.startReport(media.value, (newReport) => {
+    report.value = newReport;
+  });
 });
 
 const cleanMainMediaSwitchEffect = watchEffect(() => {
@@ -99,6 +110,11 @@ onBeforeUnmount(() => {
   imediaStreams.delete(media.value.imid);
 });
 
+onUnmounted(() => {
+  StatsAgent.stopReport(media.value.imid);
+  imediaStatsMap.delete(media.value.imid);
+});
+
 function switchMainMedia() {
   // already main media
   if (isMainMedia.value) return;
@@ -113,6 +129,9 @@ function switchMainMedia() {
   height: 100px;
   background-color: #040404;
   border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   position: relative;
 }
@@ -120,20 +139,15 @@ function switchMainMedia() {
   outline: 2px solid #9e9e9e;
   cursor: pointer;
 }
-.media-window__cover {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-}
 .media-window__stats {
   position: absolute;
   top: 4px;
   left: 4px;
+  z-index: 2;
 }
 .media-window__name {
   position: absolute;
-  bottom: 4px;
+  bottom: 0;
   left: 8px;
   color: #fff;
   font-size: 12px;
@@ -155,6 +169,5 @@ function switchMainMedia() {
 }
 .media-window__video {
   width: 100%;
-  height: 100%;
 }
 </style>

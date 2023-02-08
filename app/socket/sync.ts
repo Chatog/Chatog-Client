@@ -45,12 +45,11 @@ export function registerSyncHandlers(socket: Socket) {
     if (info.type === 'add') {
       // ignore local media sync
       if (
-        (info.audioId !== '' && info.audioId === localMic.value) ||
-        (info.videoId !== '' &&
-          info.videoId === localCameraMedia.value?.videoId) ||
-        (info.videoId !== '' &&
-          info.videoId === localScreenMedia.value?.videoId)
+        (info.audioId && info.audioId === localMic.value) ||
+        (info.videoId && info.videoId === localCameraMedia.value?.videoId) ||
+        (info.videoId && info.videoId === localScreenMedia.value?.videoId)
       ) {
+        console.debug('[socket/sync.ts] local media update, ignore');
         return;
       }
       // if nickname, means init a new imedia
@@ -63,6 +62,7 @@ export function registerSyncHandlers(socket: Socket) {
         };
         if (info.audioId) imedia.audioId = info.audioId;
         if (info.videoId) imedia.videoId = info.videoId;
+        console.debug('[socket/sync.ts] add new imedia', imedia);
         // for new imedia, just push, then media will be sub
         // when media-window mounted
         remoteMedias.value.push(imedia);
@@ -70,9 +70,6 @@ export function registerSyncHandlers(socket: Socket) {
       // add single video/audio to a existing imedia
       else {
         const imedia = remoteMedias.value.find((im) => im.imid === info.imid);
-        // @TODO FIX
-        // 100% reproduct when unpub camera/screen, because local state
-        // cleaned before sync message received
         if (!imedia) {
           console.warn(`[socket/sync.ts] media[${info.imid}] not exists`);
           return;
@@ -99,17 +96,17 @@ export function registerSyncHandlers(socket: Socket) {
       /**
        * if local pub stopped via banMedia
        */
-      if (info.audioId !== '' && info.audioId === localMic.value) {
+      if (info.audioId && info.audioId === localMic.value) {
         unpubMic();
         return;
       } else if (
-        info.videoId !== '' &&
+        info.videoId &&
         info.videoId === localCameraMedia.value?.videoId
       ) {
         unpubCamera();
         return;
       } else if (
-        info.videoId !== '' &&
+        info.videoId &&
         info.videoId === localScreenMedia.value?.videoId
       ) {
         unpubScreen();
@@ -119,20 +116,23 @@ export function registerSyncHandlers(socket: Socket) {
        * common remote media change
        */
       const imedia = remoteMedias.value.find((im) => im.imid === info.imid);
+      // @FIX
+      // 100% reproduct when unpub camera/screen, because local state
+      // cleaned before sync message received
       if (!imedia) {
-        console.error(`[socket/sync.ts] media[${info.imid}] not exists`);
+        console.warn(`[socket/sync.ts] media[${info.imid}] not exists`);
         return;
       }
       const mediaStream = imediaStreams.get(imedia.imid);
       if (!mediaStream) {
-        console.error(`[socket/sync.ts] mediaStream[${info.imid}] not exists`);
+        console.warn(`[socket/sync.ts] mediaStream[${info.imid}] not exists`);
         return;
       }
       // if both media unsubed, just remove imedia
       // media-window unmount will do clean job
       if (
-        (imedia.audioId === '' && info.videoId !== '') ||
-        (info.audioId !== '' && imedia.videoId === '')
+        (imedia.audioId === '' && info.videoId) ||
+        (info.audioId && imedia.videoId === '')
       ) {
         remoteMedias.value.splice(remoteMedias.value.indexOf(imedia), 1);
         // reset main media to avoid main media deleted

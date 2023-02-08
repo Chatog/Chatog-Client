@@ -23,6 +23,12 @@ export const useMediaStore = defineStore('media', () => {
     // dont set mainMediaId, the first media-item will do this
   }
 
+  function getIMedia(imid: string): IMediaVO | undefined {
+    if (localCameraMedia.value?.imid === imid) return localCameraMedia.value;
+    if (localScreenMedia.value?.imid === imid) return localScreenMedia.value;
+    return remoteMedias.value.find((m) => m.imid === imid);
+  }
+
   /**
    * main media
    */
@@ -42,7 +48,8 @@ export const useMediaStore = defineStore('media', () => {
     mainMediaId,
     isRecording,
 
-    updateRemoteMedias
+    updateRemoteMedias,
+    getIMedia
   };
 });
 

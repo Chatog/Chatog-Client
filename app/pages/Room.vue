@@ -66,6 +66,9 @@
       <RecordHint></RecordHint>
     </div>
 
+    <!-- video mode dialog -->
+    <VideoModeDialog></VideoModeDialog>
+
     <!-- main media -->
     <MainMedia></MainMedia>
   </v-main>
@@ -93,6 +96,7 @@ import { useMediaStore } from '@/store/media';
 import RecordDialog from '@/components/RecordDialog.vue';
 import RecordHint from '@/components/RecordHint.vue';
 import ChatPanel from '@/components/ChatPanel.vue';
+import VideoModeDialog from '@/components/VideoModeDialog.vue';
 
 const props = defineProps<{
   memberId: string;

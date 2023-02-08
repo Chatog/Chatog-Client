@@ -37,6 +37,7 @@ export interface RoomInfo {
   roomName: string;
   roomStartTime: number;
   roomOwnerId: string;
+  banChat: boolean;
 }
 export async function reqGetRoomInfo(): Promise<Res<RoomInfo>> {
   return socketRequest('/room/info');

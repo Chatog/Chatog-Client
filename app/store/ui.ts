@@ -6,6 +6,7 @@ export const useUIStore = defineStore('ui', () => {
   const mediaPanelShow = ref(false);
   const recordDialogShow = ref(false);
   const chatPanelShow = ref(false);
+  const videoModeDialogShow = ref(false);
 
   // RoomMemberPanel and ChatPanel cannot show at the same time
   function toggleRoomMemberPanelShow() {
@@ -30,6 +31,7 @@ export const useUIStore = defineStore('ui', () => {
     mediaPanelShow,
     recordDialogShow,
     chatPanelShow,
+    videoModeDialogShow,
 
     toggleRoomMemberPanelShow,
     toggleChatPanelShow

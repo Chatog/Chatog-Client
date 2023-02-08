@@ -19,12 +19,24 @@
       @click="togglePubScreen"
     ></ToolboxButton>
     <ToolboxButton
+      icon="mdi-account-voice"
+      hint="noise suppression"
+      :active="noiseSuppressionOn"
+      @click="toggleNoiseSuppression"
+    ></ToolboxButton>
+    <ToolboxButton
+      icon="mdi-camera-enhance"
+      hint="switch video mode"
+      @click="videoModeDialogShow = true"
+    ></ToolboxButton>
+    <ToolboxButton
       icon="mdi-radiobox-marked"
       hint="local record"
       :active="isRecording"
       @click="toggleRecord"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="!roomInfo.banChat"
       icon="mdi-chat"
       hint="online chat"
       :active="chatPanelShow"
@@ -69,10 +81,15 @@ import {
 import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
 import RecordAgent from '@/modules/record-agent';
+import { useMediaControlStore } from '@/store/media-control';
 
 const UIStore = useUIStore();
-const { roomMemberPanelShow, recordDialogShow, chatPanelShow } =
-  storeToRefs(UIStore);
+const {
+  roomMemberPanelShow,
+  recordDialogShow,
+  chatPanelShow,
+  videoModeDialogShow
+} = storeToRefs(UIStore);
 const {
   localMic,
   localMicMuted,
@@ -127,6 +144,21 @@ async function togglePubScreen() {
 }
 
 /**
+ * noise suppression
+ */
+const { noiseSuppressionOn } = storeToRefs(useMediaControlStore());
+function toggleNoiseSuppression() {
+  // @TODO real impl
+  if (noiseSuppressionOn.value) {
+    alert('success', 'noise suppression stopped');
+    noiseSuppressionOn.value = false;
+  } else {
+    alert('success', 'noise suppression started');
+    noiseSuppressionOn.value = true;
+  }
+}
+
+/**
  * record
  */
 function toggleRecord() {
@@ -140,7 +172,7 @@ function toggleRecord() {
   } else {
     console.log(localMic.value, cameraActive.value, screenActive.value);
     if (localMic.value === '' && !cameraActive.value && !screenActive.value) {
-      alert('warning', "you havn't pub any media");
+      alert('warning', "you havn't publish any media");
       return;
     }
     recordDialogShow.value = true;

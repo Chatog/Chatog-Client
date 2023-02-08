@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia';
 import { Ref, ref } from 'vue';
 
 export interface IMediaStatsReport {
@@ -62,7 +63,24 @@ export function defaultAudioStatsReport(): AudioStatsReport {
 }
 
 export const imediaStatsMap: Map<string, Ref<IMediaStatsReport>> = new Map();
-
 export function initIMediaStatsReport(imid: string) {
   imediaStatsMap.set(imid, ref(defaultIMediaStatsReport()));
 }
+
+export enum VideoMode {
+  STABLE,
+  QUALITY,
+  SMOOTH
+}
+export const useMediaControlStore = defineStore('media-control', () => {
+  const noiseSuppressionOn = ref(false);
+
+  const localCameraMode = ref<VideoMode>(VideoMode.STABLE);
+  const localScreenMode = ref<VideoMode>(VideoMode.STABLE);
+
+  return {
+    noiseSuppressionOn,
+    localCameraMode,
+    localScreenMode
+  };
+});

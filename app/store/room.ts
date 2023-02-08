@@ -10,7 +10,8 @@ export const useRoomStore = defineStore('room', () => {
     roomId: '',
     roomName: '',
     roomStartTime: 0,
-    roomOwnerId: ''
+    roomOwnerId: '',
+    banChat: true
   });
 
   /**

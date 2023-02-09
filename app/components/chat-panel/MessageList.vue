@@ -44,6 +44,7 @@ function isMine(msg: ChatMsg) {
 <style scoped>
 .message-list {
   height: 100%;
+  width: 100%;
   overflow: scroll;
   position: absolute;
 }

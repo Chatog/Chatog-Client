@@ -216,7 +216,6 @@ function toggleMediaPanel() {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
   padding: 4px 0;
-  z-index: 11;
 }
 .media-panel-arrow:hover {
   cursor: pointer;

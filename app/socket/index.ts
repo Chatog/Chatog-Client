@@ -1,5 +1,5 @@
 import { Res, ResCode } from '@/api';
-import { configureHomePageWindow } from '@/modules/electron-api';
+import { configureWindow } from '@/modules/electron/api';
 import router from '@/plugins/vue-router';
 import { alert } from '@/store/alert';
 import { hideLoading, showLoading } from '@/store/loading';
@@ -34,9 +34,8 @@ export function initSocket(url: string, memberId: string): Promise<Socket> {
 
     socket.on('disconnect', () => {
       console.log('[socket/index.ts] socket disconnected');
-
       if (IS_ELECTRON) {
-        configureHomePageWindow();
+        configureWindow('home');
       }
       router.push('/home');
     });

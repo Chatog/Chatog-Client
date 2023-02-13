@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { IS_ELECTRON } from '@/utils/common';
-import ELECTRON_API from '@/modules/electron-api';
+import ELECTRON_API from '@/modules/electron/api';
 
 function closeWindow() {
   ELECTRON_API.closeWindow();

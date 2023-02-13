@@ -59,7 +59,7 @@ import { reqCreateRoom } from '@/api/room';
 import { IS_ELECTRON } from '@/utils/common';
 import { alert } from '@/store/alert';
 import { defaultNickname } from '@/utils/storage';
-import { configureRoomPageWindow } from '@/modules/electron-api';
+import { configureWindow } from '@/modules/electron/api';
 
 const createRoomForm = reactive({
   nickname: defaultNickname(),
@@ -80,7 +80,7 @@ async function confirmCreateRoom() {
   reqCreateRoom(createRoomForm).then((res) => {
     const memberId = res.data;
     if (IS_ELECTRON) {
-      configureRoomPageWindow();
+      configureWindow('room');
     }
     router.push(`/room/${memberId}`);
     // save latest nickname

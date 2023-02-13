@@ -16,7 +16,12 @@
         border: none;
       }
     </style>
-    <iframe id="chatog" width="100%" height="100%"></iframe>
+    <iframe
+      id="chatog"
+      width="100%"
+      height="100%"
+      allow="microphone 'src'; camera 'src';"
+    ></iframe>
     <script src="./sdk/chatog-web-sdk.js"></script>
     <script>
       window.onload = () => {
@@ -27,7 +32,7 @@
         /**
          * init chatog sdk
          */
-        window.initChatogWeb && window.initChatogWeb(chatogServiceUrl);
+        window.initChatogWeb && window.initChatogWeb(chatogServiceUrl, iframe);
       };
     </script>
   </body>

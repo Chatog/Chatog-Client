@@ -4,7 +4,8 @@ const ChatogElectronAPIType = {
   FULLSCREEN_WINDOW: 'FULLSCREEN_WINDOW',
   RESIZE_WINDOW: 'RESIZE_WINDOW',
   SET_RESIZABLE: 'SET_RESIZABLE',
-  CENTER_WINDOW: 'CENTER_WINDOW'
+  CENTER_WINDOW: 'CENTER_WINDOW',
+  GET_SCREEN_SOURCES: 'GET_SCREEN_SOURCES'
 };
 
 function initChatogElectronMain({ window, ipcMain }) {
@@ -69,6 +70,28 @@ function initChatogElectronMain({ window, ipcMain }) {
   ipcMain.handle(ChatogElectronAPIType.CENTER_WINDOW, () => {
     window.center();
   });
+
+  /**
+   * get screen sources
+   */
+  const { desktopCapturer } = require('electron');
+  ipcMain.handle(ChatogElectronAPIType.GET_SCREEN_SOURCES, async () => {
+    const sources = await desktopCapturer.getSources({
+      types: ['window', 'screen'],
+      thumbnailSize: {
+        width: 248,
+        height: 140
+      }
+    });
+    const serilizableSources = sources.map((source) => {
+      return {
+        sourceId: source.id,
+        name: source.name,
+        thumbnail: source.thumbnail.toDataURL()
+      };
+    });
+    return serilizableSources;
+  });
 }
 
 function initChatogElectronPreload({ ipcRenderer, contextBridge }) {
@@ -90,6 +113,9 @@ function initChatogElectronPreload({ ipcRenderer, contextBridge }) {
     },
     centerWindow: () => {
       ipcRenderer.invoke(ChatogElectronAPIType.CENTER_WINDOW);
+    },
+    getScreenSources: async () => {
+      return ipcRenderer.invoke(ChatogElectronAPIType.GET_SCREEN_SOURCES);
     }
   });
 }

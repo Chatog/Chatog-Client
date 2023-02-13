@@ -82,6 +82,8 @@ import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
 import RecordAgent from '@/modules/record-agent';
 import { useMediaControlStore } from '@/store/media-control';
+import { IS_ELECTRON } from '@/utils/common';
+import ELECTRON_API from '@/modules/electron/api';
 
 const UIStore = useUIStore();
 const {
@@ -198,8 +200,12 @@ function toggleChatPanel() {
  */
 const { roomInfo } = storeToRefs(useRoomStore());
 async function invite() {
-  await navigator.clipboard.writeText(roomInfo.value.roomId);
-  alert('success', 'room number copied to clipboard', 2000);
+  if (IS_ELECTRON) {
+    ELECTRON_API.copyToClipboard(roomInfo.value.roomId);
+  } else {
+    await navigator.clipboard.writeText(roomInfo.value.roomId);
+  }
+  alert('success', 'room number copied to clipboard');
 }
 
 /**

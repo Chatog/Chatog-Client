@@ -69,6 +69,9 @@
     <!-- video mode dialog -->
     <VideoModeDialog></VideoModeDialog>
 
+    <!-- screen chosen dialog -->
+    <ScreenSourceDialog></ScreenSourceDialog>
+
     <!-- main media -->
     <MainMedia></MainMedia>
   </v-main>
@@ -82,7 +85,7 @@ import { useIdle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useUIStore } from '@/store/ui';
 import { useRoomStore, selfMemberId } from '@/store/room';
-import ELECTRON_API from '@/modules/electron-api';
+import ELECTRON_API from '@/modules/electron/api';
 
 import RoomTitle from '@/components/RoomTitle.vue';
 import RoomToolbox from '@/components/RoomToolbox.vue';
@@ -97,6 +100,7 @@ import RecordDialog from '@/components/RecordDialog.vue';
 import RecordHint from '@/components/RecordHint.vue';
 import ChatPanel from '@/components/ChatPanel.vue';
 import VideoModeDialog from '@/components/VideoModeDialog.vue';
+import ScreenSourceDialog from '@/components/ScreenSourceDialog.vue';
 
 const props = defineProps<{
   memberId: string;

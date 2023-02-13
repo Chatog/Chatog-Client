@@ -48,7 +48,7 @@ import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqJoinRoom } from '@/api/room';
 import { alert } from '@/store/alert';
-import { configureRoomPageWindow } from '@/modules/electron-api';
+import { configureWindow } from '@/modules/electron/api';
 
 const joinRoomForm = reactive({
   nickname: defaultNickname(),
@@ -70,7 +70,7 @@ async function confirmJoinRoom() {
   reqJoinRoom(joinRoomForm).then((res) => {
     const memberId = res.data;
     if (IS_ELECTRON) {
-      configureRoomPageWindow();
+      configureWindow('room');
     }
     router.push(`/room/${memberId}`);
     // save latest nickname

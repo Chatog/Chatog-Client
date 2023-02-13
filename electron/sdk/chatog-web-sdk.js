@@ -1,11 +1,13 @@
-function initChatogWeb(chatogOrigin) {
+function initChatogWeb(chatogOrigin, iframeEl) {
   const ChatogElectronAPIType = {
     CLOSE_WINDOW: 'CLOSE_WINDOW',
     MINIMIZE_WINDOW: 'MINIMIZE_WINDOW',
     FULLSCREEN_WINDOW: 'FULLSCREEN_WINDOW',
     RESIZE_WINDOW: 'RESIZE_WINDOW',
     SET_RESIZABLE: 'SET_RESIZABLE',
-    CENTER_WINDOW: 'CENTER_WINDOW'
+    CENTER_WINDOW: 'CENTER_WINDOW',
+    COPY_TO_CLIPBOARD: 'COPY_TO_CLIPBOARD',
+    GET_SCREEN_SOURCES: 'GET_SCREEN_SOURCES'
   };
 
   window.addEventListener('message', (e) => {
@@ -32,6 +34,24 @@ function initChatogWeb(chatogOrigin) {
       case ChatogElectronAPIType.CENTER_WINDOW:
         window.CHATOG_ELECTRON_API?.centerWindow();
         break;
+      case ChatogElectronAPIType.COPY_TO_CLIPBOARD:
+        navigator.clipboard.writeText(payload);
+        break;
+      case ChatogElectronAPIType.GET_SCREEN_SOURCES:
+        window.CHATOG_ELECTRON_API?.getScreenSources()
+          .then((sources) => {
+            // use postMessage to send screen infos back to iframe
+            iframeEl.contentWindow.postMessage(
+              {
+                type: ChatogElectronAPIType.GET_SCREEN_SOURCES,
+                payload: sources
+              },
+              '*'
+            );
+          })
+          .catch((e) => {
+            console.error('[chatog-web-sdk] GET_SCREEN_SOURCES error:', e);
+          });
     }
   });
 }

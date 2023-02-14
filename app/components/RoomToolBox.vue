@@ -74,9 +74,10 @@ import { reqQuitRoom } from '@/api/room';
 import {
   pubMic,
   pubCamera,
+  pubScreen,
+  unpubMic,
   unpubCamera,
-  unpubScreen,
-  pubScreen
+  unpubScreen
 } from '@/modules/media';
 import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
@@ -149,14 +150,16 @@ async function togglePubScreen() {
  * noise suppression
  */
 const { noiseSuppressionOn } = storeToRefs(useMediaControlStore());
-function toggleNoiseSuppression() {
-  // @TODO real impl
-  if (noiseSuppressionOn.value) {
-    alert('success', 'noise suppression stopped');
-    noiseSuppressionOn.value = false;
-  } else {
-    alert('success', 'noise suppression started');
-    noiseSuppressionOn.value = true;
+async function toggleNoiseSuppression() {
+  noiseSuppressionOn.value = !noiseSuppressionOn.value;
+  /**
+   * @FIX Producer.replaceTrack will cause original track ended
+   * if mic already pubed, then repub
+   */
+  if (localMic.value !== '') {
+    unpubMic();
+    alert('warning', 'republishing microphone, please wait......');
+    await pubMic();
   }
 }
 

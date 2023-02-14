@@ -276,7 +276,10 @@ export class MediaManagerClient {
     if (this._consumers.has(mediaId)) {
       const consumer = this._consumers.get(mediaId)!;
       consumer.close();
-      // @FIX closeConsumer BUG
+      /**
+       * consumer.close => server cosumer clean
+       * so we dont need to closeConsumer
+       */
       // await this.socketRequest(
       //   SignalingEvent.closeConsumer,
       //   this._consumerIds.get(mediaId)!

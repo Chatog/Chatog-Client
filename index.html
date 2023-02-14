@@ -10,5 +10,11 @@
   <body>
     <div id="app"></div>
     <script type="module" src="./app/main.ts"></script>
+    <!-- ns-util -->
+    <script src="./app/lib/ns-util.min.js"></script>
+    <script>
+      // @FIX: developer should use NSUtil directly
+      window.NSUtil = window.NOISE_SUPPRESSION;
+    </script>
   </body>
 </html>

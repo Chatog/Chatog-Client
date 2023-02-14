@@ -4,6 +4,9 @@ import { IMediaVO, useMediaStore } from '@/store/media';
 import { selfMemberId } from '@/store/room';
 import { alert } from '@/store/alert';
 import ELECTRON_API from '@/modules/electron/api';
+import { storeToRefs } from 'pinia';
+import NSAgent from '@/modules/ns-agent';
+import { useMediaControlStore } from '@/store/media-control';
 
 export enum IMediaType {
   CHAT = 'chat',
@@ -24,9 +27,20 @@ function initLocalIMedia(type: IMediaType): IMediaVO {
  */
 export async function pubMic() {
   try {
-    // pub mic audio
+    /**
+     * @FIX we must recapture audio stream because once unpub
+     * mediasoup will turn the original track to ended
+     */
     const mediaStream = await getSingleMedia(MediaType.MIC);
-    const audioTrack = mediaStream.getAudioTracks()[0];
+    let audioTrack = mediaStream.getAudioTracks()[0];
+    // check if noise suppression on
+    const { noiseSuppressionOn } = storeToRefs(useMediaControlStore());
+    if (noiseSuppressionOn.value) {
+      const denoisedStream = NSAgent.startNoiseSuppression(mediaStream);
+      audioTrack = denoisedStream.getAudioTracks()[0];
+    } else {
+      NSAgent.stopNoiseSuppression();
+    }
     MediaManager.pubMedia(audioTrack, {
       appData: {
         type: MediaType.MIC

@@ -135,7 +135,7 @@ class StatsAgent {
                 stats.remoteId
               );
               if (preRemoteInboundRtpStats) {
-                // @FIX remote-inbound sometimes no packetsReceived
+                // remote-inbound sometimes no packetsReceived
                 // use outbound-rtp.packetsSent to replace
                 if (!remoteInboundRtpStats.packetsReceived) {
                   const preOutboundRtpStats = getStatsById(
@@ -183,8 +183,10 @@ class StatsAgent {
               codecStats.payloadType
             })`;
           }
-          // @FIX mediasoup => no remote-outbound-rtp
-          // dont show rtt
+          /**
+           * mediasoup => no remote-outbound-rtp
+           * so we dont show rtt
+           */
           videoRet!.rtt = -1;
         }
       });

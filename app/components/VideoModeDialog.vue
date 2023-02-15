@@ -46,8 +46,16 @@ import { storeToRefs } from 'pinia';
 import { useMediaControlStore, VideoMode } from '@/store/media-control';
 import { ref } from 'vue';
 import { alert } from '@/store/alert';
+import {
+  pubCamera,
+  pubScreen,
+  unpubCamera,
+  unpubScreen
+} from '@/modules/media';
+import { useMediaStore } from '@/store/media';
 
 const { videoModeDialogShow } = storeToRefs(useUIStore());
+const { localCameraMedia, localScreenMedia } = storeToRefs(useMediaStore());
 const { localCameraMode, localScreenMode } = storeToRefs(
   useMediaControlStore()
 );
@@ -55,11 +63,31 @@ const { localCameraMode, localScreenMode } = storeToRefs(
 const cameraModeInput = ref<VideoMode>(localCameraMode.value);
 const screenModeInput = ref<VideoMode>(localScreenMode.value);
 
-function confirm() {
+async function confirm() {
+  // already pub & mode change => should repub
+  const shouldCameraRepub =
+    localCameraMode.value !== cameraModeInput.value &&
+    localCameraMedia.value?.videoId;
+  const shouldScreenRepub =
+    localScreenMode.value !== screenModeInput.value &&
+    localScreenMedia.value?.videoId;
+  if (shouldCameraRepub) {
+    unpubCamera();
+    await pubCamera();
+    alert('warning', 'republishing camera...');
+  }
+  // @FIX better repub same screen, not let user choose again
+  if (shouldScreenRepub) {
+    unpubScreen();
+    await pubScreen();
+    alert('warning', 'republishing screen...');
+  }
   localCameraMode.value = cameraModeInput.value;
   localScreenMode.value = screenModeInput.value;
-  // @TODO real impl
-  alert('success', 'video mode changed');
+  // if no repub, directly show hint
+  if (!shouldCameraRepub && !shouldScreenRepub) {
+    alert('success', 'video mode changed');
+  }
   videoModeDialogShow.value = false;
 }
 </script>

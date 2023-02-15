@@ -116,9 +116,11 @@ export function registerSyncHandlers(socket: Socket) {
        * common remote media change
        */
       const imedia = remoteMedias.value.find((im) => im.imid === info.imid);
-      // @FIX
-      // 100% reproduct when unpub camera/screen, because local state
-      // cleaned before sync message received
+      /**
+       * @FIX
+       * 100% reproduct when unpub camera/screen, because local state
+       * cleaned before sync message received
+       */
       if (!imedia) {
         console.warn(`[socket/sync.ts] media[${info.imid}] not exists`);
         return;

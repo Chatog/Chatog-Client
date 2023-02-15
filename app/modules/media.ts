@@ -6,7 +6,8 @@ import { alert } from '@/store/alert';
 import ELECTRON_API from '@/modules/electron/api';
 import { storeToRefs } from 'pinia';
 import NSAgent from '@/modules/ns-agent';
-import { useMediaControlStore } from '@/store/media-control';
+import { useMediaControlStore, VideoMode } from '@/store/media-control';
+import VideoModeAgent from './video-mode-agent';
 
 export enum IMediaType {
   CHAT = 'chat',
@@ -73,9 +74,10 @@ export async function pubCamera() {
   try {
     const MediaStore = useMediaStore();
     if (MediaStore.localCameraMedia) return;
-    // pub camera media
+    // get camera video
     const mediaStream = await getSingleMedia(MediaType.CAMERA);
     const videoTrack = mediaStream.getVideoTracks()[0];
+
     MediaManager.pubMedia(videoTrack, {
       appData: {
         type: MediaType.CAMERA
@@ -107,9 +109,17 @@ export async function pubScreen() {
   try {
     const MediaStore = useMediaStore();
     if (MediaStore.localScreenMedia) return;
-    // pub camera media
+    // get screen video
     const mediaStream = await getSingleMedia(MediaType.SCREEN);
     const videoTrack = mediaStream.getVideoTracks()[0];
+    // check if need to control video encoder
+    const { localScreenMode } = storeToRefs(useMediaControlStore());
+    const shouldControlVideoEncoder =
+      localScreenMode.value === VideoMode.QUALITY;
+    if (shouldControlVideoEncoder) {
+      VideoModeAgent.controlVideoEncoder(VideoMode.QUALITY);
+    }
+
     MediaManager.pubMedia(videoTrack, {
       appData: {
         type: MediaType.SCREEN
@@ -123,6 +133,12 @@ export async function pubScreen() {
       })
       .catch((e) => {
         alert('error', e);
+      })
+      .finally(() => {
+        // remember to restore after publish
+        if (shouldControlVideoEncoder) {
+          VideoModeAgent.restoreVideoEncoder();
+        }
       });
   } catch (e) {
     console.error('[pubScreen]', e);

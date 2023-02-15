@@ -1,6 +1,5 @@
 <template>
   <div class="home-page">
-    <!-- @TODO we need better logo-->
     <div class="logo">
       <v-icon class="logo__icon" size="52">mdi-message-video</v-icon>
       <div class="logo__text">CHATOG</div>

@@ -108,12 +108,15 @@ export function unpubCamera() {
 export async function pubScreen() {
   try {
     const MediaStore = useMediaStore();
+    const { localScreenMode } = storeToRefs(useMediaControlStore());
     if (MediaStore.localScreenMedia) return;
-    // get screen video
-    const mediaStream = await getSingleMedia(MediaType.SCREEN);
+    // smooth => 15fps; stable/quality => 6fps
+    const options: GetSingleMediaOptions = {
+      framerate: localScreenMode.value === VideoMode.SMOOTH ? 15 : 6
+    };
+    const mediaStream = await getSingleMedia(MediaType.SCREEN, options);
     const videoTrack = mediaStream.getVideoTracks()[0];
     // check if need to control video encoder
-    const { localScreenMode } = storeToRefs(useMediaControlStore());
     const shouldControlVideoEncoder =
       localScreenMode.value === VideoMode.QUALITY;
     if (shouldControlVideoEncoder) {

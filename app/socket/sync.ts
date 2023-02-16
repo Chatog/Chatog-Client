@@ -186,6 +186,6 @@ export function registerSyncHandlers(socket: Socket) {
       .sort((m1, m2) => m1.time - m2.time)
       .concat(sendingMessages.sort((m1, m2) => m1.time - m2.time));
 
-    ChatStore.messages = sortedMessages;
+    ChatStore.updateMessages(sortedMessages);
   });
 }

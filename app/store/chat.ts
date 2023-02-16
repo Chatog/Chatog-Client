@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { selfMemberId } from './room';
 
 export enum ChatMsgState {
@@ -36,12 +36,34 @@ export const useChatStore = defineStore('chat', () => {
       },
       localId: localMsgId
     };
-    messages.value.push(locaMsg);
+    updateMessages([...messages.value, locaMsg]);
     return locaMsg;
+  }
+
+  function updateMessages(msgs: ChatMsg[]) {
+    messages.value = msgs;
+    // after messages update, scroll message list to the bottom
+    nextTick(() => {
+      messageListScrollToBottom();
+    });
   }
 
   return {
     messages,
+    updateMessages,
     addLocalSendingMessage
   };
 });
+
+export function messageListScrollToBottom() {
+  const el = document.getElementById('MessageList');
+  if (!el) {
+    console.warn('[messageListScrollToBottom] no #MessageList');
+    return;
+  }
+  const scrollHeight = el.scrollHeight;
+  el.scroll({
+    top: scrollHeight,
+    behavior: 'smooth'
+  });
+}

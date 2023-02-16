@@ -1,5 +1,5 @@
 <template>
-  <div class="message-list">
+  <div id="MessageList" class="message-list">
     <div
       class="message"
       v-for="msg of messages"
@@ -73,6 +73,7 @@ function isMine(msg: ChatMsg) {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 14px;
+  word-break: break-all;
 }
 .message__sending {
   margin-top: auto;

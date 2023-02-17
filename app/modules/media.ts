@@ -100,6 +100,10 @@ export function unpubCamera() {
   const MediaStore = useMediaStore();
   if (!MediaStore.localCameraMedia) return;
   MediaManager.unpubMedia(MediaStore.localCameraMedia.videoId);
+  // clean main media
+  if (MediaStore.mainMediaId === MediaStore.localCameraMedia.imid) {
+    MediaStore.mainMediaId = '';
+  }
   MediaStore.localCameraMedia = null;
 }
 /**
@@ -151,6 +155,10 @@ export function unpubScreen() {
   const MediaStore = useMediaStore();
   if (!MediaStore.localScreenMedia) return;
   MediaManager.unpubMedia(MediaStore.localScreenMedia.videoId);
+  // clean main media
+  if (MediaStore.mainMediaId === MediaStore.localScreenMedia.imid) {
+    MediaStore.mainMediaId = '';
+  }
   MediaStore.localScreenMedia = null;
 }
 

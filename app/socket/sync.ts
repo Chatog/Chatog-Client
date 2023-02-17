@@ -136,10 +136,11 @@ export function registerSyncHandlers(socket: Socket) {
         (imedia.audioId === '' && info.videoId) ||
         (info.audioId && imedia.videoId === '')
       ) {
+        // clean main media
+        if (mainMediaId.value === imedia.imid) {
+          mainMediaId.value = '';
+        }
         remoteMedias.value.splice(remoteMedias.value.indexOf(imedia), 1);
-        // reset main media to avoid main media deleted
-        mainMediaId.value =
-          remoteMedias.value.length > 0 ? remoteMedias.value[0].imid : '';
         return;
       }
       // only remove audio/video, another left

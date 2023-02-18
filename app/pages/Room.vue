@@ -102,6 +102,8 @@ import ChatPanel from '@/components/ChatPanel.vue';
 import VideoModeDialog from '@/components/VideoModeDialog.vue';
 import ScreenSourceDialog from '@/components/ScreenSourceDialog.vue';
 
+import PROD_CONFIG from '@/configs/prod-config';
+
 const props = defineProps<{
   memberId: string;
 }>();
@@ -118,8 +120,14 @@ const MediaStore = useMediaStore();
 
 onMounted(() => {
   // init socket
-  // @TODO dev url
-  initSocket('ws://localhost:8080', props.memberId).then((socket) => {
+  initSocket(
+    `ws://${
+      import.meta.env.MODE === 'development'
+        ? 'localhost:8080'
+        : PROD_CONFIG.SERVER_HOST
+    }`,
+    props.memberId
+  ).then((socket) => {
     // fetch room info
     reqGetRoomInfo().then((res) => {
       roomInfo.value = res.data;

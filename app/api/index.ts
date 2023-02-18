@@ -2,6 +2,8 @@ import axios from 'axios';
 import { showLoading, hideLoading } from '@/store/loading';
 import { alert } from '@/store/alert';
 
+import PROD_CONFIG from '@/configs/prod-config';
+
 export enum ResCode {
   SUCCESS = 0,
   ERROR_MSG = 1
@@ -14,7 +16,10 @@ export interface Res<T> {
 }
 
 const axiosInstance = axios.create({
-  baseURL: '/api'
+  baseURL:
+    import.meta.env.MODE === 'development'
+      ? '/api'
+      : `http://${PROD_CONFIG.SERVER_HOST}`
 });
 
 /**

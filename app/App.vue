@@ -21,7 +21,7 @@
   </div>
   <!-- dialog -->
   <div class="global-dialog-container">
-    <v-dialog v-model="dialogShow" width="60%" max-width="360" persistent>
+    <v-dialog v-model="dialogShow" width="80%" max-width="360" persistent>
       <v-card>
         <v-card-title>{{ dialogTitle }}</v-card-title>
         <v-card-text>{{ dialogText }}</v-card-text>

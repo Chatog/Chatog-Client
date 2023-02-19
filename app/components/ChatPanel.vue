@@ -1,6 +1,17 @@
 <template>
   <div class="chat-panel">
-    <div class="chat-panel__title">Text Chat</div>
+    <div class="chat-panel__title">
+      <div>Text Chat</div>
+      <v-icon
+        icon="mdi-close"
+        color="#fff"
+        @click="
+          () => {
+            chatPanelShow = false;
+          }
+        "
+      ></v-icon>
+    </div>
     <v-divider color="#FFF" class="my-2" thickness="2"></v-divider>
     <div class="chat-panel__main">
       <MessageList :messages="messages"></MessageList>
@@ -30,9 +41,11 @@ import MessageList from '@/components/chat-panel/MessageList.vue';
 import { storeToRefs } from 'pinia';
 import { useChatStore } from '@/store/chat';
 import { reqChatSend } from '@/api/chat';
+import { useUIStore } from '@/store/ui';
 
 const ChatStore = useChatStore();
 const { messages } = storeToRefs(ChatStore);
+const { chatPanelShow } = storeToRefs(useUIStore());
 
 const inputMsg = ref('');
 
@@ -61,6 +74,11 @@ function sendMsg() {
   color: #fff;
   font-weight: 300;
   user-select: none;
+  display: flex;
+  flex-direction: row;
+}
+.chat-panel__title i {
+  margin-left: auto;
 }
 .chat-panel__main {
   flex: 1;

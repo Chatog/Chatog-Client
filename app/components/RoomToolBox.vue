@@ -7,29 +7,34 @@
       @click="toggleMuteMic"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="!IS_MOBILE"
       icon="mdi-camera"
       hint="camera"
       :active="cameraActive"
       @click="togglePubCamera"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="!IS_MOBILE"
       icon="mdi-monitor"
       hint="share screen"
       :active="screenActive"
       @click="togglePubScreen"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="!IS_MOBILE"
       icon="mdi-account-voice"
       hint="noise suppression"
       :active="noiseSuppressionOn"
       @click="toggleNoiseSuppression"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="IS_ELECTRON"
       icon="mdi-camera-enhance"
       hint="switch video mode"
       @click="videoModeDialogShow = true"
     ></ToolboxButton>
     <ToolboxButton
+      v-if="IS_ELECTRON"
       icon="mdi-radiobox-marked"
       hint="local record"
       :active="isRecording"
@@ -83,7 +88,7 @@ import { useMediaStore } from '@/store/media';
 import MediaManager from '@/media';
 import RecordAgent from '@/modules/record-agent';
 import { useMediaControlStore } from '@/store/media-control';
-import { IS_ELECTRON } from '@/utils/common';
+import { IS_ELECTRON, IS_MOBILE } from '@/utils/common';
 import ELECTRON_API from '@/modules/electron/api';
 
 const UIStore = useUIStore();

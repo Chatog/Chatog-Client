@@ -8,7 +8,7 @@
       'background-color': backgroundColor
     }"
   >
-    <v-tooltip v-if="hint" activator="parent" location="top">{{
+    <v-tooltip v-if="hint && !IS_MOBILE" activator="parent" location="top">{{
       hint
     }}</v-tooltip>
     <v-icon :size="size" :color="iconColor">{{ icon }}</v-icon>
@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { IS_MOBILE } from '@/utils/common';
 import { computed, ref, toRef } from 'vue';
 
 defineEmits(['click']);

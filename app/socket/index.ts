@@ -46,17 +46,18 @@ export function initSocket(url: string, memberId: string): Promise<Socket> {
 
 export function socketRequest<P, R>(
   eventName: string,
-  params?: P
+  params?: P,
+  showloading = true
 ): Promise<Res<R>> {
   return new Promise((resolve, reject) => {
     if (!socket) {
       throw new Error('[socket/index.ts] socket not valid');
     }
     console.debug('[socketRequest] send:', eventName, params);
-    showLoading();
+    if (showloading) showLoading();
     socket.emit(eventName, params, (res: Res<R>) => {
       console.debug('[socketRequest] recv:', eventName, res);
-      hideLoading();
+      if (showloading) hideLoading();
       if (res.code === ResCode.ERROR_MSG) {
         alert('error', res.msg);
         throw new Error(

@@ -2,6 +2,10 @@
  * whether in electron or in browser
  */
 export const IS_ELECTRON = window !== window.top;
+/**
+ * whether in mobile phone
+ */
+export const IS_MOBILE = window.matchMedia('(pointer:coarse)').matches;
 
 /**
  * convert memberId to roomId

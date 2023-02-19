@@ -78,7 +78,13 @@ export async function pubCamera() {
     const mediaStream = await getSingleMedia(MediaType.CAMERA);
     const videoTrack = mediaStream.getVideoTracks()[0];
 
+    const { localCameraMode } = storeToRefs(useMediaControlStore());
     MediaManager.pubMedia(videoTrack, {
+      codec: 'vp9',
+      encodings:
+        localCameraMode.value === VideoMode.SMOOTH
+          ? CAMERA_SVC_ENCODINGS
+          : undefined,
       appData: {
         type: MediaType.CAMERA
       }
@@ -128,6 +134,11 @@ export async function pubScreen() {
     }
 
     MediaManager.pubMedia(videoTrack, {
+      codec: 'vp9',
+      encodings:
+        localScreenMode.value === VideoMode.SMOOTH
+          ? SCREEN_SVC_ENCODINGS
+          : undefined,
       appData: {
         type: MediaType.SCREEN
       }
@@ -220,3 +231,6 @@ export async function getSingleMedia(
   }
   return Promise.reject('[getSingleMedia] invalid type');
 }
+
+const CAMERA_SVC_ENCODINGS = [{ scalabilityMode: 'S3T3_KEY' }];
+const SCREEN_SVC_ENCODINGS = [{ scalabilityMode: 'S3T3', dtx: true }];

@@ -34,6 +34,12 @@ export type ServerConsumerOptions = {
   appData?: Record<string, unknown>;
 };
 
+export interface PublishOptions {
+  codec?: 'vp8' | 'vp9';
+  encodings?: any[];
+  appData?: any;
+}
+
 /**
  * class
  */
@@ -195,15 +201,45 @@ export class MediaManagerClient {
 
   async pubMedia(
     track: MediaStreamTrack,
-    options?: ProducerOptions
+    options?: PublishOptions
   ): Promise<string> {
-    // ensure _sendTransport
+    /**
+     * ensure _sendTransport
+     */
     if (!this._sendTransport) {
       await this.createSendTransport();
     }
-    // create client-side producer
+
+    /**
+     * setup options
+     */
+    const producerOptions: ProducerOptions = {};
+    // codec
+    if (options?.codec) {
+      const codec = this._device.rtpCapabilities.codecs?.find(
+        (c) => c.mimeType.toLowerCase() === `video/${options.codec}`
+      );
+      if (!codec) {
+        console.warn(`[media-manager] no codec: ${options.codec}`);
+      } else {
+        producerOptions.codec = codec;
+      }
+    }
+    // encodings
+    if (options?.encodings) {
+      producerOptions.encodings = options.encodings;
+    }
+    // appData
+    if (options?.appData) {
+      producerOptions.appData = options.appData;
+    }
+    console.debug(`[media-manager] producer options:`, producerOptions);
+
+    /**
+     * create client-side producer
+     */
     const producer = await this._sendTransport?.produce({
-      ...options,
+      ...producerOptions,
       track
     });
     if (!producer) throw new Error('[media-manager] create producer failed');

@@ -28,7 +28,7 @@
       @click="toggleNoiseSuppression"
     ></ToolboxButton>
     <ToolboxButton
-      v-if="IS_ELECTRON"
+      v-if="!IS_MOBILE"
       icon="mdi-camera-enhance"
       hint="switch video mode"
       @click="videoModeDialogShow = true"

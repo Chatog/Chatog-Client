@@ -80,7 +80,8 @@ export async function pubCamera() {
 
     const { localCameraMode } = storeToRefs(useMediaControlStore());
     MediaManager.pubMedia(videoTrack, {
-      codec: 'vp9',
+      // @FIX mobile cannot cosume vp9
+      // codec: 'vp9',
       encodings:
         localCameraMode.value === VideoMode.SMOOTH
           ? CAMERA_SVC_ENCODINGS
@@ -134,7 +135,8 @@ export async function pubScreen() {
     }
 
     MediaManager.pubMedia(videoTrack, {
-      codec: 'vp9',
+      // @FIX mobile cannot cosume vp9
+      // codec: 'vp9',
       encodings:
         localScreenMode.value === VideoMode.SMOOTH
           ? SCREEN_SVC_ENCODINGS

@@ -36,7 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { IS_ELECTRON } from '@/utils/common';
+import { onMounted } from 'vue';
+import { IS_ELECTRON, IS_MOBILE } from '@/utils/common';
 import { storeToRefs } from 'pinia';
 import { useAlertStore } from '@/store/alert';
 import { useLoadingStore } from '@/store/loading';
@@ -60,6 +61,15 @@ function onDialogConfirm() {
   dialogShow.value = false;
   // wait until dialog hide animation ended
   setTimeout(() => dialogResolve.value(undefined), 280);
+}
+
+// avoid mobile bottom bar's block
+if (IS_MOBILE) {
+  onMounted(() => {
+    document
+      .querySelector('.v-application__wrap')
+      ?.setAttribute('style', `min-height: ${window.innerHeight}px`);
+  });
 }
 </script>
 

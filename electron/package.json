@@ -1,0 +1,11 @@
+{
+  "name": "chatog-client",
+  "version": "0.0.1",
+  "description": "the electron-based client for Chatog",
+  "main": "main.js",
+  "author": {
+    "name": "GStarP",
+    "email": "1700066935@qq.com"
+  },
+  "license": "MIT"
+}

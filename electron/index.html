@@ -25,7 +25,8 @@
     <script src="./sdk/chatog-web-sdk.js"></script>
     <script>
       window.onload = () => {
-        const chatogServiceUrl = 'http://localhost:3004';
+        // only in https, getUserMedia is allowed
+        const chatogServiceUrl = 'https://192.168.3.17:3004';
 
         const iframe = document.getElementById('chatog');
         iframe.src = chatogServiceUrl;

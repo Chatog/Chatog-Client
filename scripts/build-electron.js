@@ -4,17 +4,18 @@ const path = require('path');
 
 // go go go!!!
 function go() {
-  copyPackageJson();
+  // no need to copy web app package.json
+  // copyPackageJson();
   build();
 }
 go();
 
 /**
- * copy package.json from `.` to `./dist`
+ * copy package.json from `.` to `./electron`
  */
 function copyPackageJson() {
   const rawPath = path.join(__dirname, '../package.json');
-  const tarPath = path.join(__dirname, '../dist/package.json');
+  const tarPath = path.join(__dirname, '../electron/package.json');
   fs.copyFileSync(rawPath, tarPath);
   console.log('[build] successfully copy package.json');
 }
@@ -29,7 +30,7 @@ function build() {
       config: {
         directories: {
           output: 'package',
-          app: 'dist'
+          app: 'electron'
         },
         appId: 'nju.gstarp',
         productName: 'Chatog',

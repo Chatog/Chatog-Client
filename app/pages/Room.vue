@@ -121,7 +121,7 @@ const MediaStore = useMediaStore();
 onMounted(() => {
   // init socket
   initSocket(
-    `ws://${
+    `wss://${
       import.meta.env.MODE === 'development'
         ? 'localhost:8080'
         : PROD_CONFIG.SERVER_HOST

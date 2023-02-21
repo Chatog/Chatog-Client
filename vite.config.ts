@@ -1,6 +1,7 @@
 // Plugins
 import vue from '@vitejs/plugin-vue';
 import vuetify from 'vite-plugin-vuetify';
+import basicSSL from '@vitejs/plugin-basic-ssl';
 
 // Utilities
 import { ConfigEnv, defineConfig } from 'vite';
@@ -11,24 +12,6 @@ import DevConfig from './configs/dev-config.json';
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv) => {
   const isDev = command === 'serve';
-  const isBuildElectron = !isDev && mode === 'electron';
-
-  /**
-   * only build main.js and preload.js
-   */
-  if (isBuildElectron) {
-    return defineConfig({
-      build: {
-        emptyOutDir: false,
-        rollupOptions: {
-          input: { main: 'electron/main.js', preload: 'electron/preload.js' },
-          output: {
-            entryFileNames: '[name].js'
-          }
-        }
-      }
-    });
-  }
 
   return defineConfig({
     plugins: [
@@ -36,7 +19,8 @@ export default ({ command, mode }: ConfigEnv) => {
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
       vuetify({
         autoImport: true
-      })
+      }),
+      basicSSL()
     ],
     resolve: {
       alias: {
@@ -48,6 +32,7 @@ export default ({ command, mode }: ConfigEnv) => {
       host: '0.0.0.0',
       port: DevConfig.DEV_SERVER_PORT,
       open: false,
+      https: true,
       proxy: {
         '/api': {
           target: 'http://localhost:8080',

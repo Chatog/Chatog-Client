@@ -11,7 +11,6 @@
     "dev": "vite",
     "dev:e": "node ./scripts/serve-electron.js",
     "build": "vue-tsc --noEmit && vite build",
-    "build:e": "vite build --mode electron",
     "build:exe": "node ./scripts/build-electron.js"
   },
   "dependencies": {
@@ -34,6 +33,7 @@
     "@types/node": "^18.11.9",
     "@types/sdp-transform": "^2.4.5",
     "@types/webfontloader": "^1.6.35",
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@vitejs/plugin-vue": "^3.0.3",
     "electron": "^21.3.0",
     "electron-builder": "^23.6.0",

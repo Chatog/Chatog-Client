@@ -19,7 +19,7 @@ const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === 'development'
       ? '/api'
-      : `http://${PROD_CONFIG.SERVER_HOST}`
+      : `https://${PROD_CONFIG.SERVER_HOST}`
 });
 
 /**

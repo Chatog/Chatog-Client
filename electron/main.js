@@ -1,6 +1,9 @@
 const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const { join } = require('path');
 
+// allow https load
+app.commandLine.appendSwitch('--ignore-certificate-errors', 'true');
+
 const isDev = process.env.NODE_ENV === 'development';
 
 let window = null;
